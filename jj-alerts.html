@@ -245,7 +245,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
     <div class="nav-section">分析</div>
     <div class="nav-item" onclick="location.href='jj-warroom.html'"><span class="nav-icon">🎯</span> 戰情室</div>
     <div class="nav-section">警示與報表</div>
-    <div class="nav-item" onclick="location.href='jj-alerts.html'" ><span class="nav-icon">🔔</span> 低庫存警示<span class="nav-badge" id="navBadge">0</span></div>
+    <div class="nav-item active" onclick="location.href='jj-alerts.html'" ><span class="nav-icon">🔔</span> 低庫存警示<span class="nav-badge" id="navBadge">0</span></div>
     <div class="nav-item" onclick="location.href='jj-inventory.html'"><span class="nav-icon">🗂️</span> 盤點作業</div>
     <div class="nav-item" onclick="location.href='jj-reports.html'"><span class="nav-icon">📊</span> 報表匯出</div>
     <div class="nav-section">工具</div>
@@ -457,6 +457,21 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 <script>
 
 // ── 手機側欄開關（全域函式）──
+// [v10.1修復] 手機版：點選選單後自動關閉側欄
+(function(){
+  function _bindAutoClose(){
+    if(window.innerWidth>768)return;
+    document.querySelectorAll('.nav-item').forEach(function(el){
+      if(!el.dataset.acBound){
+        el.dataset.acBound='1';
+        el.addEventListener('touchend',function(){setTimeout(function(){closeSidebar();},80);},{passive:true});
+      }
+    });
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_bindAutoClose);}
+  else{setTimeout(_bindAutoClose,200);}
+  window.addEventListener('resize',_bindAutoClose);
+})();
 function toggleSidebar() {
   var sb  = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');

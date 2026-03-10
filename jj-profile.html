@@ -212,7 +212,7 @@ body{display:flex;min-height:100vh;background:var(--bg);font-family:'Noto Sans T
     <div class="nav-item" onclick="location.href='jj-oplog.html'"><span class="nav-icon">📝</span> 操作紀錄</div>
     <div class="nav-item" onclick="location.href='jj-warehouse.html'"><span class="nav-icon">🏭</span> 倉庫設定</div>
     <div class="nav-section">帳號</div>
-    <div class="nav-item" onclick="location.href='jj-profile.html'" ><span class="nav-icon">👤</span> 帳號設定</div>
+    <div class="nav-item active" onclick="location.href='jj-profile.html'" ><span class="nav-icon">👤</span> 帳號設定</div>
   </nav>
   <div class="sidebar-user">
     <div class="u-avatar" id="sAvatar">?</div>
@@ -395,6 +395,21 @@ function doLogout() {
 <script>
 
 // ── 手機側欄開關（全域函式）──
+// [v10.1修復] 手機版：點選選單後自動關閉側欄
+(function(){
+  function _bindAutoClose(){
+    if(window.innerWidth>768)return;
+    document.querySelectorAll('.nav-item').forEach(function(el){
+      if(!el.dataset.acBound){
+        el.dataset.acBound='1';
+        el.addEventListener('touchend',function(){setTimeout(function(){closeSidebar();},80);},{passive:true});
+      }
+    });
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_bindAutoClose);}
+  else{setTimeout(_bindAutoClose,200);}
+  window.addEventListener('resize',_bindAutoClose);
+})();
 function toggleSidebar() {
   var sb  = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
