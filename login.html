@@ -317,17 +317,23 @@
 
 <script>
 // ── JJ 登入系統 ──
-// 若已登入且 session 有效，直接進儀表板
-(function init() {
+(function bootLogin() {
+  function tryBoot(attempt) {
+    if (typeof JJ === 'undefined') {
+      if (attempt < 30) { setTimeout(function(){ tryBoot(attempt+1); }, 50); }
+      return;
+    }
+    if (JJ.getUser && JJ.getUser() && JJ.isSessionAlive && JJ.isSessionAlive()) {
+      location.href = 'jj-dashboard.html';
+      return;
+    }
+    setupLogin();
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-    return;
+    document.addEventListener('DOMContentLoaded', function(){ tryBoot(0); });
+  } else {
+    tryBoot(0);
   }
-  if (typeof JJ !== 'undefined' && JJ.getUser() && JJ.isSessionAlive()) {
-    location.href = 'jj-dashboard.html';
-    return;
-  }
-  setupLogin();
 })();
 
 function setupLogin() {
