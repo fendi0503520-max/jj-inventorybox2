@@ -162,7 +162,30 @@
     @keyframes pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .success-overlay h2 { color: var(--text); font-size: 22px; margin-bottom: 8px; }
     .success-overlay p  { color: var(--muted); font-size: 14px; }
-  </style>
+  
+/* ═══ Login 手機版 ═══ */
+@media(max-width:480px){
+  body{ padding:16px; align-items:flex-start; padding-top:40px; }
+  .login-card, .card{
+    width:100% !important;
+    max-width:100% !important;
+    padding:28px 20px !important;
+    border-radius:16px !important;
+  }
+  .login-logo{ width:48px !important; height:48px !important; font-size:18px !important; }
+  .login-title{ font-size:20px !important; }
+  .login-sub{ font-size:13px !important; }
+  input[type="email"], input[type="password"], input[type="text"]{
+    font-size:16px !important; /* 防止 iOS 自動放大 */
+    padding:12px 14px 12px 40px !important;
+  }
+  .btn-login, button[type="submit"], #loginBtn{
+    padding:14px !important;
+    font-size:15px !important;
+  }
+}
+
+</style>
 </head>
 <body>
 
@@ -264,8 +287,8 @@
   </div>
 
   <script>
-// 密碼顯示切換
-window.addEventListener('load', function() {
+// 密碼顯示切換（直接執行）
+(function() {
   var pwInput = document.getElementById('password');
   var toggle  = document.getElementById('togglePw');
   if (toggle && pwInput) {
@@ -273,7 +296,7 @@ window.addEventListener('load', function() {
       pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
     });
   }
-});
+})();
 </script>
 
 <style>
@@ -295,13 +318,17 @@ window.addEventListener('load', function() {
 <script>
 // ── JJ 登入系統 ──
 // 若已登入且 session 有效，直接進儀表板
-window.onload = function() {
+(function init() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+    return;
+  }
   if (typeof JJ !== 'undefined' && JJ.getUser() && JJ.isSessionAlive()) {
     location.href = 'jj-dashboard.html';
     return;
   }
   setupLogin();
-};
+})();
 
 function setupLogin() {
   var emailEl  = document.getElementById('email');
