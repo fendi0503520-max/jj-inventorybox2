@@ -277,7 +277,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('即時庫存報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('即時庫存報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -302,7 +302,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('入出庫明細報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('入出庫明細報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -323,7 +323,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('月結彙總報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('月結彙總報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -344,7 +344,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('低庫存警示報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('低庫存警示報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -365,7 +365,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('盤點差異報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('盤點差異報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -389,7 +389,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="rc-footer">
           <button class="btn-excel" onclick="startExport('供應商採購報表','Excel')">📊 Excel</button>
           <button class="btn-pdf" onclick="startExport('供應商採購報表','PDF')">📄 PDF</button>
-          <button class="btn-preview">預覽</button>
+          <button class="btn-preview" onclick="showToastMsg('📊 預覽功能即將推出')">預覽</button>
         </div>
       </div>
 
@@ -404,11 +404,11 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
       <table>
         <thead><tr><th>匯出時間</th><th>報表名稱</th><th>格式</th><th>期間</th><th>匯出人員</th><th>操作</th></tr></thead>
         <tbody>
-          <tr><td style="color:var(--muted)" data-label="匯出時間">今日 14:20</td><td data-label="報表名稱">即時庫存報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026/03/10</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn">⬇ 下載</button></td></tr>
-          <tr><td style="color:var(--muted)" data-label="匯出時間">今日 10:05</td><td data-label="報表名稱">入出庫明細報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--red-dim);color:var(--red)">PDF</span></td><td style="color:var(--muted)" data-label="期間">03/01~03/10</td><td data-label="匯出人員">陳小華</td><td data-label="操作"><button class="dl-btn">⬇ 下載</button></td></tr>
-          <tr><td style="color:var(--muted)" data-label="匯出時間">昨日 17:00</td><td data-label="報表名稱">月結彙總報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026年2月</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn">⬇ 下載</button></td></tr>
-          <tr><td style="color:var(--muted)" data-label="匯出時間">03/08 09:30</td><td data-label="報表名稱">低庫存警示報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--red-dim);color:var(--red)">PDF</span></td><td style="color:var(--muted)" data-label="期間">2026/03/08</td><td data-label="匯出人員">李大明</td><td data-label="操作"><button class="dl-btn">⬇ 下載</button></td></tr>
-          <tr><td style="color:var(--muted)" data-label="匯出時間">03/05 16:45</td><td data-label="報表名稱">盤點差異報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026/03/05</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn">⬇ 下載</button></td></tr>
+          <tr><td style="color:var(--muted)" data-label="匯出時間">今日 14:20</td><td data-label="報表名稱">即時庫存報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026/03/10</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn" onclick="showToastMsg('⬇ 請使用下方 Excel 下載')">⬇ 下載</button></td></tr>
+          <tr><td style="color:var(--muted)" data-label="匯出時間">今日 10:05</td><td data-label="報表名稱">入出庫明細報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--red-dim);color:var(--red)">PDF</span></td><td style="color:var(--muted)" data-label="期間">03/01~03/10</td><td data-label="匯出人員">陳小華</td><td data-label="操作"><button class="dl-btn" onclick="showToastMsg('⬇ 請使用下方 Excel 下載')">⬇ 下載</button></td></tr>
+          <tr><td style="color:var(--muted)" data-label="匯出時間">昨日 17:00</td><td data-label="報表名稱">月結彙總報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026年2月</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn" onclick="showToastMsg('⬇ 請使用下方 Excel 下載')">⬇ 下載</button></td></tr>
+          <tr><td style="color:var(--muted)" data-label="匯出時間">03/08 09:30</td><td data-label="報表名稱">低庫存警示報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--red-dim);color:var(--red)">PDF</span></td><td style="color:var(--muted)" data-label="期間">2026/03/08</td><td data-label="匯出人員">李大明</td><td data-label="操作"><button class="dl-btn" onclick="showToastMsg('⬇ 請使用下方 Excel 下載')">⬇ 下載</button></td></tr>
+          <tr><td style="color:var(--muted)" data-label="匯出時間">03/05 16:45</td><td data-label="報表名稱">盤點差異報表</td><td data-label="格式"><span class="fmt-badge" style="background:var(--green-dim);color:var(--green)">Excel</span></td><td style="color:var(--muted)" data-label="期間">2026/03/05</td><td data-label="匯出人員">黃小翰</td><td data-label="操作"><button class="dl-btn" onclick="showToastMsg('⬇ 請使用下方 Excel 下載')">⬇ 下載</button></td></tr>
         </tbody>
       </table>
     </div>

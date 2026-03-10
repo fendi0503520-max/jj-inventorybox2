@@ -189,6 +189,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
 }
 
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <!-- 漢堡按鈕 -->
@@ -275,7 +276,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
           </select>
         </div>
         <button class="btn-search" onclick="doFilter()">查 詢</button>
-        <button class="btn-export">⬇ 匯出</button>
+        <button class="btn-export" onclick="exportLogsExcel()">⬇ 匯出</button>
       </div>
     </div>
 
@@ -506,6 +507,21 @@ function closeSidebar() {
   sb.setAttribute('data-open','0');
 })();
 
+</script>
+<script>
+function exportLogsExcel() {
+  try {
+    var logs = JJ.getLogs();
+    var ws = XLSX.utils.json_to_sheet(logs.map(function(l){ return {
+      '時間':l.time,'類型':l.type,'商品':l.prod,
+      '倉庫':l.wh,'變動':l.chg,'操作人員':l.user
+    }; }));
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '異動紀錄');
+    XLSX.writeFile(wb, '異動紀錄_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    showToast && showToast('✅ 匯出成功！');
+  } catch(e) { alert('匯出失敗：'+e.message); }
+}
 </script>
 </body>
 </html>

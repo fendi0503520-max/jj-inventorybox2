@@ -176,6 +176,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
 }
 
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <!-- 漢堡按鈕 -->
@@ -233,7 +234,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
         <div class="filter-group"><div class="filter-label">操作類型</div><select class="filter-input" id="fType"><option value="">全部類型</option><option>登入/登出</option><option>入庫作業</option><option>出庫作業</option><option>商品管理</option><option>系統設定</option><option>報表匯出</option><option>警示操作</option></select></div>
         <div class="filter-group"><div class="filter-label">結果</div><select class="filter-input" id="fResult"><option value="">全部</option><option>成功</option><option>失敗</option></select></div>
         <button class="btn-search" onclick="doFilter()">查 詢</button>
-        <button class="btn-export">⬇ 匯出 Log</button>
+        <button class="btn-export" onclick="exportOpLogExcel()">⬇ 匯出 Log</button>
       </div>
     </div>
     <div class="kpi-row">
@@ -374,6 +375,21 @@ function closeSidebar() {
   sb.setAttribute('data-open','0');
 })();
 
+</script>
+<script>
+function exportOpLogExcel() {
+  try {
+    var logs = JJ.getLogs();
+    var ws = XLSX.utils.json_to_sheet(logs.map(function(l){ return {
+      '時間':l.time,'操作類型':l.type,'商品':l.prod,
+      '倉庫':l.wh,'變動':l.chg,'人員':l.user,'備註':l.note||''
+    }; }));
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '操作日誌');
+    XLSX.writeFile(wb, '操作日誌_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    showToast && showToast('✅ 匯出成功！');
+  } catch(e) { alert('匯出失敗：'+e.message); }
+}
 </script>
 </body>
 </html>

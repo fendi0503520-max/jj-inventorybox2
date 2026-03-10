@@ -246,6 +246,7 @@ select.form-input{cursor:pointer;}
 }
 
 </style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -315,8 +316,8 @@ select.form-input{cursor:pointer;}
     <!-- Toolbar -->
     <div class="toolbar">
       <button class="btn-primary" onclick="openModal()">＋ 新增商品</button>
-      <button class="btn-ghost">⬇ 匯入 Excel</button>
-      <button class="btn-ghost">⬆ 匯出清單</button>
+      <button class="btn-ghost" onclick="showToast('📁 匯入功能即將推出')">⬇ 匯入 Excel</button>
+      <button class="btn-ghost" onclick="exportProductsExcel()">⬆ 匯出清單</button>
       <div class="search-box">
         <span class="search-icon">🔍</span>
         <input type="text" placeholder="搜尋商品名稱、編號、條碼…" id="searchInput" oninput="filterTable()"/>
@@ -921,6 +922,22 @@ function closeSidebar() {
   sb.setAttribute('data-open','0');
 })();
 
+</script>
+<script>
+function exportProductsExcel() {
+  try {
+    var prods = JJ.getProducts();
+    var ws = XLSX.utils.json_to_sheet(prods.map(function(p){ return {
+      '商品名稱':p.name,'商品編號':p.code,'分類':p.cat,
+      '單位':p.unit,'現有庫存':p.stock,'安全庫存':p.safe,
+      '倉庫':p.wh,'狀態':p.status
+    }; }));
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '商品清單');
+    XLSX.writeFile(wb, '商品清單_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    showToast && showToast('✅ 匯出成功！');
+  } catch(e) { alert('匯出失敗：'+e.message); }
+}
 </script>
 </body>
 </html>
