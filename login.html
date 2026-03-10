@@ -264,8 +264,8 @@
   </div>
 
   <script>
-// 密碼顯示切換
-window.addEventListener('load', function() {
+// 密碼顯示切換（直接執行）
+(function() {
   var pwInput = document.getElementById('password');
   var toggle  = document.getElementById('togglePw');
   if (toggle && pwInput) {
@@ -273,7 +273,7 @@ window.addEventListener('load', function() {
       pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
     });
   }
-});
+})();
 </script>
 
 <style>
@@ -295,13 +295,17 @@ window.addEventListener('load', function() {
 <script>
 // ── JJ 登入系統 ──
 // 若已登入且 session 有效，直接進儀表板
-window.onload = function() {
+(function init() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+    return;
+  }
   if (typeof JJ !== 'undefined' && JJ.getUser() && JJ.isSessionAlive()) {
     location.href = 'jj-dashboard.html';
     return;
   }
   setupLogin();
-};
+})();
 
 function setupLogin() {
   var emailEl  = document.getElementById('email');
