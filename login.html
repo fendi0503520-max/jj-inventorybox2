@@ -253,7 +253,7 @@
         <a href="#" class="forgot">忘記密碼？</a>
       </div>
 
-      <button class="btn" id="loginBtn" >登 入</button>
+      <button class="btn" id="loginBtn" onclick="doLoginDirect()">登 入</button>
 
       <div class="divider">
         <span></span><p>或使用其他方式登入</p><span></span>
@@ -401,6 +401,40 @@ function socialLogin(p) { alert('使用 ' + p + ' 登入（示範用）'); }
   60%{transform:translateX(-5px)}80%{transform:translateX(5px)}
 }
 </style>
+
+
+<script>
+// ── 登入按鈕保險機制（直接全域呼叫）──
+function doLoginDirect() {
+  var email = document.getElementById('email');
+  var pwd   = document.getElementById('password');
+  var errBox = document.getElementById('loginErr');
+  if (!email || !pwd) return;
+  var e = email.value.trim();
+  var p = pwd.value;
+  if (!e || !p) {
+    if (errBox) { errBox.innerHTML='⚠ 請輸入帳號與密碼'; errBox.style.display='block'; }
+    return;
+  }
+  if (typeof JJ === 'undefined') {
+    if (errBox) { errBox.innerHTML='⚠ 系統載入中，請稍候再試'; errBox.style.display='block'; }
+    return;
+  }
+  var result = JJ.login(e, p);
+  if (!result.ok) {
+    var msg = result.reason === 'locked'
+      ? '🔒 帳號已鎖定，請 ' + result.minutes + ' 分鐘後再試'
+      : '⚠ 帳號或密碼錯誤，還有 ' + result.remaining + ' 次機會';
+    if (errBox) { errBox.innerHTML=msg; errBox.style.display='block'; }
+    return;
+  }
+  location.href = result.mustChange ? 'jj-profile.html' : 'jj-dashboard.html';
+}
+// Enter 鍵也觸發
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter') doLoginDirect();
+});
+</script>
 
 </body>
 </html>
