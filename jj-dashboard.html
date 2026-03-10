@@ -823,13 +823,15 @@ function toggleSidebar() {
   var btn = document.getElementById('hamburger');
   var ov  = document.getElementById('sidebarOverlay');
   if (!sb) return;
-  var isOpen = sb.classList.contains('open');
+  var isOpen = sb.getAttribute('data-open') === '1';
   if (isOpen) {
-    sb.classList.remove('open');
+    sb.style.transform = 'translateX(-100%)';
+    sb.setAttribute('data-open', '0');
     if (btn) btn.classList.remove('active');
     if (ov)  ov.style.display = 'none';
   } else {
-    sb.classList.add('open');
+    sb.style.transform = 'translateX(0)';
+    sb.setAttribute('data-open', '1');
     if (btn) btn.classList.add('active');
     if (ov)  ov.style.display = 'block';
   }
@@ -838,10 +840,25 @@ function closeSidebar() {
   var sb  = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
   var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  sb.classList.remove('open');
+  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
   if (btn) btn.classList.remove('active');
   if (ov)  ov.style.display = 'none';
 }
+// 手機時初始化側欄狀態
+(function initMobileSidebar(){
+  var sb = document.querySelector('.sidebar');
+  if (!sb) return;
+  // 加上 transition
+  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
+  // 手機模式下收起側欄
+  if (window.innerWidth <= 768) {
+    sb.style.transform = 'translateX(-100%)';
+    sb.setAttribute('data-open','0');
+    var main = document.querySelector('.main');
+    if (main) main.style.marginLeft = '0';
+  }
+  sb.setAttribute('data-open','0');
+})();
 
 </script>
 </body>
