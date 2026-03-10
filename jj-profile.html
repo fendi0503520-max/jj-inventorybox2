@@ -155,14 +155,34 @@ body{display:flex;min-height:100vh;background:var(--bg);font-family:'Noto Sans T
   .stats-row{ grid-template-columns:1fr !important; }
 }
 
+
+/* 漢堡按鈕 - 預設隱藏，手機才顯示 */
+#hamburger {
+  display: none;
+  position: fixed; top: 12px; left: 12px; z-index: 400;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: #fff; border: 1px solid #e2e8f0;
+  align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  flex-direction: column; gap: 5px; padding: 10px;
+}
+#hamburger span {
+  display: block; width: 18px; height: 2px;
+  background: #1a2535; border-radius: 2px; transition: all .2s;
+}
+#hamburger.active span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+#hamburger.active span:nth-child(2){ opacity: 0; }
+#hamburger.active span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+@media(max-width:768px){
+  #hamburger { display: flex !important; }
+}
+
 </style>
 </head>
 <body>
 <!-- 漢堡按鈕 -->
-<button id="hamburger" onclick="toggleSidebar()" style="display:none;position:fixed;top:12px;left:12px;z-index:400;width:40px;height:40px;border-radius:10px;background:#fff;border:1px solid #e2e8f0;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);flex-direction:column;gap:5px;padding:10px;">
-  <span style="display:block;width:18px;height:2px;background:#1a2535;border-radius:2px;transition:all .2s"></span>
-  <span style="display:block;width:18px;height:2px;background:#1a2535;border-radius:2px;transition:all .2s"></span>
-  <span style="display:block;width:18px;height:2px;background:#1a2535;border-radius:2px;transition:all .2s"></span>
+<button id="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
 </button>
 <!-- 側欄遮罩 -->
 <div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;"></div>
@@ -371,35 +391,34 @@ function doLogout() {
   location.href='login.html';
 }
 </script>
+
 <script>
 
-// ── 手機側欄開關 ──
+// ── 手機側欄開關（全域函式）──
 function toggleSidebar() {
-  var sb = document.querySelector('.sidebar');
+  var sb  = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
-  var overlay = document.getElementById('sidebarOverlay');
+  var ov  = document.getElementById('sidebarOverlay');
   if (!sb) return;
-  sb.classList.toggle('open');
-  btn.classList.toggle('active');
-  overlay.classList.toggle('show');
+  var isOpen = sb.classList.contains('open');
+  if (isOpen) {
+    sb.classList.remove('open');
+    if (btn) btn.classList.remove('active');
+    if (ov)  ov.style.display = 'none';
+  } else {
+    sb.classList.add('open');
+    if (btn) btn.classList.add('active');
+    if (ov)  ov.style.display = 'block';
+  }
 }
 function closeSidebar() {
-  var sb = document.querySelector('.sidebar');
+  var sb  = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
-  var overlay = document.getElementById('sidebarOverlay');
-  if (sb) sb.classList.remove('open');
+  var ov  = document.getElementById('sidebarOverlay');
+  if (sb)  sb.classList.remove('open');
   if (btn) btn.classList.remove('active');
-  if (overlay) overlay.classList.remove('show');
+  if (ov)  ov.style.display = 'none';
 }
-// 手機版顯示漢堡按鈕
-(function(){
-  function checkMobile(){
-    var btn = document.getElementById('hamburger');
-    if (btn) btn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
-  }
-  checkMobile();
-  window.addEventListener('resize', checkMobile);
-})();
 
 </script>
 </body>
