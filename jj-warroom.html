@@ -397,7 +397,7 @@ function drawDonut(canvas, segs) {
 function drawLine(canvas, labels, d1, d2) {
   const W = canvas.parentElement.offsetWidth - 32 || 400, H = 150;
   canvas.width=W; canvas.height=H;
-  const ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
   const p={t:8,r:10,b:24,l:32};
   const gW=W-p.l-p.r, gH=H-p.t-p.b;
@@ -427,15 +427,15 @@ function drawLine(canvas, labels, d1, d2) {
 }
 
 function drawPie(canvas, segs) {
-  const W = canvas.parentElement.offsetWidth - 32 || 280, H = 160;
+  var W = canvas.parentElement.offsetWidth - 32 || 280, H = 160;
   canvas.width=W; canvas.height=H;
-  const ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,W,H);
-  const cx=W/2, cy=H/2, r=Math.min(W/2,H/2)-10;
-  const total=segs.reduce((a,x)=>a+x.v,0)||1;
+  var cx=W/2, cy=H/2, r=Math.min(W/2,H/2)-10;
+  var total=segs.reduce((a,x)=>a+x.v,0)||1;
   let s=-Math.PI/2;
   segs.forEach(seg=>{
-    const a=seg.v/total*Math.PI*2;
+    var a=seg.v/total*Math.PI*2;
     ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,s,s+a); ctx.closePath();
     ctx.fillStyle=seg.c; ctx.fill();
     ctx.strokeStyle='#0d1e35'; ctx.lineWidth=2; ctx.stroke();
@@ -456,7 +456,7 @@ function refresh() {
   const logs     = JJ.getLogs();
 
   // KPI
-  const total  = products.length;
+  var total  = products.length;
   const normal = products.filter(p=>p.stock>=p.safe).length;
   const warn   = products.filter(p=>p.stock>=p.safe*0.3&&p.stock<p.safe).length;
   const crit   = products.filter(p=>p.stock<p.safe*0.3).length;
@@ -472,7 +472,7 @@ function refresh() {
   const outLogs = logs.filter(l=>l.type==='出庫');
   const prodConsume = {};
   outLogs.forEach(l=>{
-    const p = products.find(x=>x.name===l.prod);
+    var p = products.find(x=>x.name===l.prod);
     if(p){ prodConsume[p.id]=(prodConsume[p.id]||0)+Math.abs(parseInt(l.chg)||0); }
   });
   // 用 log 總天數估算（模擬 30 天）
@@ -511,7 +511,7 @@ function refresh() {
   // ── Wh bars ──
   const whData=[{n:'大溪倉',used:4280,cap:6000,c:'#ffd700'},{n:'大肚倉',used:3200,cap:7000,c:'#00ff9d'},{n:'岡山倉',used:3800,cap:5000,c:'#ff3b3b'}];
   document.getElementById('whBody').innerHTML = whData.map(w=>{
-    const pct=Math.round(w.used/w.cap*100);
+    var pct=Math.round(w.used/w.cap*100);
     return `<div style="margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px">
         <span style="color:${w.c};font-weight:700">${w.n}</span>
@@ -550,8 +550,8 @@ function refresh() {
   // ── 熱力圖 ──
   const sorted=[...products].sort((a,b)=>(a.stock/a.safe)-(b.stock/b.safe)).slice(0,10);
   document.getElementById('heatBody').innerHTML = sorted.length ? sorted.map(p=>{
-    const pct=Math.min(100,Math.round(p.stock/p.safe*100));
-    const col=pct<30?'#ff3b3b':pct<70?'#ffd700':'#00ff9d';
+    var pct=Math.min(100,Math.round(p.stock/p.safe*100));
+    var col=pct<30?'#ff3b3b':pct<70?'#ffd700':'#00ff9d';
     return `<div class="heat-row">
       <div class="heat-lbl" title="${p.name}">${p.name}</div>
       <div class="heat-track"><div class="heat-fill" style="width:${pct}%;background:linear-gradient(90deg,${col}55,${col})">
@@ -565,7 +565,7 @@ function refresh() {
   const suppliers=['統一倉儲','大洋包材','台灣棧板','三重搬運','優適耗材'];
   const supMap={'包裝材料':'大洋包材','棧板設備':'台灣棧板','搬運工具':'三重搬運','耗材':'優適耗材'};
   document.getElementById('supBody').innerHTML = needBuy.length ? needBuy.slice(0,8).map(p=>{
-    const pct=Math.round(p.stock/p.safe*100);
+    var pct=Math.round(p.stock/p.safe*100);
     const urgency=pct<30?{l:'緊急',c:'#ff3b3b',bg:'rgba(255,59,59,0.12)'}:
                   pct<60?{l:'注意',c:'#ffd700',bg:'rgba(255,215,0,0.12)'}:
                          {l:'一般',c:'#00ff9d',bg:'rgba(0,255,157,0.1)'};
@@ -602,7 +602,7 @@ window.addEventListener('resize', ()=>{ setTimeout(refresh,100); });
 (function(){
   const ok = JJ.guardPage('jj-warroom');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

@@ -802,7 +802,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 (function(){
   const ok = JJ.guardPage('jj-dashboard');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

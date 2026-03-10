@@ -436,12 +436,12 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 // 直接執行（原 DOMContentLoaded callback）
 
   function renderStock(list) {
-    const tbody = document.querySelector('table tbody');
+    var tbody = document.querySelector('table tbody');
     if (!tbody) return;
     tbody.innerHTML = list.map(p => {
-      const pct = Math.min(100, Math.round(p.stock/p.safe*100));
-      const col = pct<30?'#e03a2f':pct<70?'#f5a623':'#3dba7e';
-      const lvl = pct<30?'緊急':pct<70?'注意':'正常';
+      var pct = Math.min(100, Math.round(p.stock/p.safe*100));
+      var col = pct<30?'#e03a2f':pct<70?'#f5a623':'#3dba7e';
+      var lvl = pct<30?'緊急':pct<70?'注意':'正常';
       return `<tr>
         <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#6474880">${p.code}</div></td>
         <td><span style="padding:2px 9px;border-radius:7px;font-size:11px;background:rgba(74,144,217,0.1);color:#4a90d9">${p.cat}</span></td>
@@ -452,14 +452,13 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
       </tr>`;
     }).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#6474880">查無資料</td></tr>';
   }
-  const products = JJ.getProducts();
-  renderStock(products);
-  const si = document.querySelector('input[type="text"]');
+  var _jjProds = JJ.getProducts();
+  renderStock(_jjProds);
+  var si = document.querySelector('input[type="text"]');
   if (si) si.addEventListener('input', () => {
-    const kw = si.value.toLowerCase();
-    renderStock(products.filter(p => p.name.toLowerCase().includes(kw)||p.code.toLowerCase().includes(kw)));
+    var kw = si.value.toLowerCase();
+    renderStock(_jjProds.filter(p => p.name.toLowerCase().includes(kw)||p.code.toLowerCase().includes(kw)));
   });
-
 </script>
 
 <script>
@@ -467,7 +466,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 (function(){
   const ok = JJ.guardPage('jj-stock');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

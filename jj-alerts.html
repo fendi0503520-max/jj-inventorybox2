@@ -407,21 +407,21 @@ const _u = JJ.getUser(); if (!_u) location.href = 'login.html';
 document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
 // 直接執行（原 DOMContentLoaded callback）
 
-  const products = JJ.getProducts();
-  const lowProds = products.filter(p => p.status==='active' && p.stock < p.safe)
+  var _jjProds = JJ.getProducts();
+  var lowProds = _jjProds.filter(p => p.status==='active' && p.stock < p.safe)
     .sort((a,b)=>(a.stock/a.safe)-(b.stock/b.safe));
-  const critical = lowProds.filter(p => p.stock/p.safe < 0.3);
-  const warning  = lowProds.filter(p => p.stock/p.safe >= 0.3);
+  var critical = lowProds.filter(p => p.stock/p.safe < 0.3);
+  var warning  = lowProds.filter(p => p.stock/p.safe >= 0.3);
 
   // 更新 banner
   document.querySelector('.alert-banner h2').textContent = `目前有 ${lowProds.length} 項商品需要補貨！`;
   document.querySelector('.alert-banner p').textContent  = `其中 ${critical.length} 項為緊急（庫存低於安全庫存 30%），請盡快安排採購入庫。`;
 
   // 更新 KPI
-  const kpis = document.querySelectorAll('.kpi-value');
+  var kpis = document.querySelectorAll('.kpi-value');
   if(kpis[0]) kpis[0].textContent = critical.length;
   if(kpis[1]) kpis[1].textContent = warning.length;
-  if(kpis[2]) kpis[2].textContent = products.filter(p=>p.stock>=p.safe).length;
+  if(kpis[2]) kpis[2].textContent = _jjProds.filter(p=>p.stock>=p.safe).length;
 
   // 更新 badge
   document.querySelectorAll('.nav-badge').forEach(b => b.textContent = lowProds.length);
@@ -434,7 +434,6 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
     days: 1,
   }));
   renderCards();
-
 </script>
 
 <script>
@@ -442,7 +441,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 (function(){
   const ok = JJ.guardPage('jj-alerts');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

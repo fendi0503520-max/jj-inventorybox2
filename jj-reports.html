@@ -506,17 +506,17 @@ function realExcelExport(reportType) {
     XLSX.utils.book_append_sheet(wb, ws, '庫存現況');
   }
   if (reportType === 'logs' || reportType === 'all') {
-    const rows = [['時間','異動類型','商品名稱','倉庫','異動量','異動前','異動後','操作人員','單據號碼','備註']];
+    var rows = [['時間','異動類型','商品名稱','倉庫','異動量','異動前','異動後','操作人員','單據號碼','備註']];
     logs.forEach(l => rows.push([l.time,l.type,l.prod,l.wh,l.chg,l.before,l.after,l.user,l.doc,l.note]));
-    const ws = XLSX.utils.aoa_to_sheet(rows);
+    var ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols'] = [{wch:20},{wch:12},{wch:22},{wch:8},{wch:8},{wch:8},{wch:8},{wch:10},{wch:18},{wch:20}];
     XLSX.utils.book_append_sheet(wb, ws, '異動紀錄');
   }
   if (reportType === 'low' || reportType === 'all') {
     const low = products.filter(p => p.stock < p.safe);
-    const rows = [['商品名稱','倉庫','現有庫存','安全庫存','缺口','建議採購量']];
+    var rows = [['商品名稱','倉庫','現有庫存','安全庫存','缺口','建議採購量']];
     low.forEach(p => rows.push([p.name,p.wh,p.stock,p.safe,p.safe-p.stock,p.safe*2-p.stock]));
-    const ws = XLSX.utils.aoa_to_sheet(rows);
+    var ws = XLSX.utils.aoa_to_sheet(rows);
     ws['!cols'] = [{wch:24},{wch:8},{wch:10},{wch:10},{wch:8},{wch:12}];
     XLSX.utils.book_append_sheet(wb, ws, '低庫存警示');
   }

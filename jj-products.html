@@ -576,21 +576,21 @@ if (!_u) location.href = 'login.html';
 document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
 
 // ── 資料 ──
-let products = JJ.getProducts();
-let editId = null;
-const cats = ['包裝材料','棧板設備','搬運工具','耗材'];
-const units = ['捲','片','個','台','包','箱','組','件'];
-const whs   = ['大溪倉','大肚倉','岡山倉'];
+var _jjProds = JJ.getProducts();
+var editId = null;
+var cats = ['包裝材料','棧板設備','搬運工具','耗材'];
+var units = ['捲','片','個','台','包','箱','組','件'];
+var whs   = ['大溪倉','大肚倉','岡山倉'];
 
-function save() { JJ.saveProducts(products); }
+function save() { JJ.saveProducts(_jjProds); }
 
 // ── 統計列 ──
 function renderStats() {
-  const total  = products.length;
-  const normal = products.filter(p => p.status==='active' && p.stock >= p.safe).length;
-  const low    = products.filter(p => p.status==='active' && p.stock < p.safe).length;
-  const inact  = products.filter(p => p.status!=='active').length;
-  const statEls = document.querySelectorAll('.stat-num');
+  var total  = _jjProds.length;
+  var normal = _jjProds.filter(p => p.status==='active' && p.stock >= p.safe).length;
+  var low    = _jjProds.filter(p => p.status==='active' && p.stock < p.safe).length;
+  var inact  = _jjProds.filter(p => p.status!=='active').length;
+  var statEls = document.querySelectorAll('.stat-num');
   if (statEls[0]) statEls[0].textContent = total;
   if (statEls[1]) statEls[1].textContent = normal;
   if (statEls[2]) statEls[2].textContent = low;
@@ -599,13 +599,13 @@ function renderStats() {
 
 // ── 表格 ──
 function renderTable(list) {
-  const tbody = document.querySelector('table tbody') || document.getElementById('prodBody');
+  var tbody = document.querySelector('table tbody') || document.getElementById('prodBody');
   if (!tbody) return;
-  if (!list) list = products;
+  if (!list) list = _jjProds;
   tbody.innerHTML = list.map(p => {
-    const pct  = Math.min(100, Math.round(p.stock / p.safe * 100));
-    const col  = pct < 30 ? '#e03a2f' : pct < 70 ? '#f5a623' : '#3dba7e';
-    const slabel = p.status === 'active' ? '<span style="color:#3dba7e;font-weight:600">● 啟用</span>' : '<span style="color:#6474880">○ 停用</span>';
+    var pct  = Math.min(100, Math.round(p.stock / p.safe * 100));
+    var col  = pct < 30 ? '#e03a2f' : pct < 70 ? '#f5a623' : '#3dba7e';
+    var slabel = p.status === 'active' ? '<span style="color:#3dba7e;font-weight:600">● 啟用</span>' : '<span style="color:#6474880">○ 停用</span>';
     return `<tr>
       <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#6474880">${p.code}</div></td>
       <td><span style="padding:2px 9px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(74,144,217,0.1);color:#4a90d9">${p.cat}</span></td>
@@ -630,10 +630,10 @@ function renderTable(list) {
 
 // ── 搜尋篩選 ──
 function doSearch() {
-  const kw = (document.getElementById('searchInput') || document.querySelector('input[placeholder*="搜尋"]') || {value:''}).value.toLowerCase();
-  const cat = (document.getElementById('catFilter') || {value:''}).value;
-  const st  = (document.getElementById('statusFilter') || {value:''}).value;
-  let list = products;
+  var kw = (document.getElementById('searchInput') || document.querySelector('input[placeholder*="搜尋"]') || {value:''}).value.toLowerCase();
+  var cat = (document.getElementById('catFilter') || {value:''}).value;
+  var st  = (document.getElementById('statusFilter') || {value:''}).value;
+  var list = _jjProds;
   if (kw)  list = list.filter(p => p.name.toLowerCase().includes(kw) || p.code.toLowerCase().includes(kw));
   if (cat) list = list.filter(p => p.cat === cat);
   if (st === 'low')    list = list.filter(p => p.stock < p.safe);
@@ -644,9 +644,9 @@ function doSearch() {
 
 // ── Modal ──
 function buildModalHTML(p) {
-  const catOpts = cats.map(c => `<option ${p&&p.cat===c?'selected':''}>${c}</option>`).join('');
-  const unitOpts = units.map(u => `<option ${p&&p.unit===u?'selected':''}>${u}</option>`).join('');
-  const whOpts = whs.map(w => `<option ${p&&p.wh===w?'selected':''}>${w}</option>`).join('');
+  var catOpts = cats.map(c => `<option ${p&&p.cat===c?'selected':''}>${c}</option>`).join('');
+  var unitOpts = units.map(u => `<option ${p&&p.unit===u?'selected':''}>${u}</option>`).join('');
+  var whOpts = whs.map(w => `<option ${p&&p.wh===w?'selected':''}>${w}</option>`).join('');
   return `
   <div id="jjModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:500;display:flex;align-items:center;justify-content:center">
     <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.13);border-radius:16px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:popIn .25s ease">
@@ -698,30 +698,30 @@ function openAdd() {
 }
 function openEdit(id) {
   editId = id;
-  const p = products.find(x => x.id === id);
+  var p = _jjProds.find(x => x.id === id);
   document.body.insertAdjacentHTML('beforeend', buildModalHTML(p));
 }
 function closeModal() {
   document.getElementById('jjModal')?.remove();
 }
 function saveProd() {
-  const name   = document.getElementById('mName').value.trim();
-  const code   = document.getElementById('mCode').value.trim();
-  const cat    = document.getElementById('mCat').value;
-  const unit   = document.getElementById('mUnit').value;
-  const safe   = parseInt(document.getElementById('mSafe').value) || 0;
-  const wh     = document.getElementById('mWh').value;
-  const status = document.getElementById('mStatus').value;
-  const barcode= document.getElementById('mBarcode').value.trim();
+  var name   = document.getElementById('mName').value.trim();
+  var code   = document.getElementById('mCode').value.trim();
+  var cat    = document.getElementById('mCat').value;
+  var unit   = document.getElementById('mUnit').value;
+  var safe   = parseInt(document.getElementById('mSafe').value) || 0;
+  var wh     = document.getElementById('mWh').value;
+  var status = document.getElementById('mStatus').value;
+  var barcode= document.getElementById('mBarcode').value.trim();
   if (!name) { alert('請填寫商品名稱'); return; }
   if (editId) {
-    const p = products.find(x => x.id === editId);
+    var p = _jjProds.find(x => x.id === editId);
     if (p) Object.assign(p, { name, code, cat, unit, safe, wh, status, barcode });
     JJ.addLog({ type:'商品管理', prod: name, wh, chg:'編輯', before:'—', after:'—', user: _u.name, doc:'—', note:'編輯商品資料' });
   } else {
-    const stock = parseInt(document.getElementById('mStock').value) || 0;
-    const id = 'P' + Date.now();
-    products.push({ id, name, code: code || id, cat, unit, stock, safe, wh, status, barcode });
+    var stock = parseInt(document.getElementById('mStock').value) || 0;
+    var id = 'P' + Date.now();
+    _jjProds.push({ id, name, code: code || id, cat, unit, stock, safe, wh, status, barcode });
     JJ.addLog({ type:'商品管理', prod: name, wh, chg:'新增', before:'—', after: stock, user: _u.name, doc:'—', note:'新增商品' });
   }
   save();
@@ -730,10 +730,10 @@ function saveProd() {
   showToast(editId ? `✅ 已更新「${name}」` : `✅ 已新增「${name}」`);
 }
 function deleteProd(id) {
-  const p = products.find(x => x.id === id);
+  var p = _jjProds.find(x => x.id === id);
   if (!p) return;
   if (!confirm(`確定要刪除「${p.name}」嗎？`)) return;
-  products = products.filter(x => x.id !== id);
+  products = _jjProds.filter(x => x.id !== id);
   save();
   renderTable();
   showToast(`🗑 已刪除「${p.name}」`);
@@ -741,7 +741,7 @@ function deleteProd(id) {
 
 // ── Toast ──
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   if (t) { t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 }
 
@@ -750,16 +750,15 @@ function showToast(msg) {
 
   renderTable();
   // 綁定搜尋
-  const si = document.getElementById('searchInput') || document.querySelector('input[placeholder*="搜尋"]');
+  var si = document.getElementById('searchInput') || document.querySelector('input[placeholder*="搜尋"]');
   if (si) si.addEventListener('input', doSearch);
   // 綁定新增按鈕
   // 按鈕已有 onclick='openModal()'，無需重複綁定
   // 綁定篩選
   ['catFilter','statusFilter'].forEach(id => {
-    const el = document.getElementById(id);
+    var el = document.getElementById(id);
     if (el) el.addEventListener('change', doSearch);
   });
-
 </script>
 <style>@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}</style>
 
@@ -769,7 +768,7 @@ function showToast(msg) {
 (function(){
   const ok = JJ.guardPage('jj-products');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');
@@ -805,7 +804,7 @@ function openImgUpload(productId) {
 }
 
 function getProductImg(productId) {
-  const imgs = JSON.parse(localStorage.getItem('jj_product_imgs') || '{}');
+  covar imgs JSON.parse(localStorage.getItem('jj_product_imgs') || '{}');
   return imgs[productId] || null;
 }
 
@@ -840,7 +839,7 @@ if (typeof _origRender === 'function') {
     document.querySelectorAll('tbody tr').forEach(tr => {
       const firstTd = tr.querySelector('td');
       if (firstTd && !tr.querySelector('[data-prod-img]')) {
-        const pid = tr.getAttribute('data-id') || (firstTd.querySelector('[data-id]') && firstTd.querySelector('[data-id]').getAttribute('data-id'));
+        consvar pidr.getAttribute('data-id') || (firstTd.querySelector('[data-id]') && firstTd.querySelector('[data-id]').getAttribute('data-id'));
         if (pid) {
           const imgTd = document.createElement('td');
           imgTd.setAttribute('data-prod-img', pid);
@@ -858,11 +857,11 @@ const imgObserver = new MutationObserver(() => {
     document.querySelectorAll('tbody tr').forEach(tr => {
       if (tr.querySelector('[data-prod-img]')) return;
       const idEl = tr.querySelector('[data-id],[data-pid]') || tr;
-      const pid = idEl.getAttribute('data-id') || idEl.getAttribute('data-pid') || tr.getAttribute('data-id');
+      const var pidl.getAttribute('data-id') || idEl.getAttribute('data-pid') || tr.getAttribute('data-id');
       if (!pid) return;
-      const imgTd = document.createElement('td');
+      const imvar imgTdent.createElement('td');
       imgTd.setAttribute('data-prod-img', pid);
-      const firstTd = tr.querySelector('td');
+      const fivar firstTderySelector('td');
       if (firstTd) tr.insertBefore(imgTd, firstTd);
     });
     refreshProductImages();

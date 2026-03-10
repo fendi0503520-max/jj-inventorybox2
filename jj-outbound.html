@@ -460,9 +460,9 @@ function onSelectProduct(id){
 }
 
 function checkStock(id){
-  const name=document.getElementById(`sel-${id}`)?.value;
+  var name=document.getElementById(`sel-${id}`)?.value;
   const qty=parseInt(document.getElementById(`qty-${id}`)?.value)||0;
-  const cur=stockData[name]??null;
+  covar curtockData[name]??null;
   const chk=document.getElementById(`chk-${id}`);
   if(!name||cur===null){chk.textContent='—';chk.className='';return;}
   if(qty>cur){chk.textContent='⚠ 庫存不足';chk.style.color='var(--red)';}
@@ -475,11 +475,11 @@ function updateTotals(){
   const rows=[...document.getElementById('itemsBody').querySelectorAll('tr[id^="item-"]')];
   let totalQty=0,hasWarn=false;
   rows.forEach(r=>{
-    const id=r.id.replace('item-','');
-    const qty=parseInt(document.getElementById(`qty-${id}`)?.value)||0;
+    var id=r.id.replace('item-','');
+    const var qtyInt(document.getElementById(`qty-${id}`)?.value)||0;
     totalQty+=qty;
-    const name=document.getElementById(`sel-${id}`)?.value;
-    const cur=stockData[name]??null;
+    consvar nameument.getElementById(`sel-${id}`)?.value;
+    const cuvar curta[name]??null;
     if(cur!==null&&qty>cur) hasWarn=true;
   });
   document.getElementById('sumItems').textContent=rows.length;
@@ -490,7 +490,7 @@ function updateTotals(){
 function removeItem(id){
   document.getElementById(`item-${id}`)?.remove();
   if(!document.getElementById('itemsBody').querySelector('tr[id^="item-"]')){
-    const noRow=document.createElement('tr');
+    var noRow=document.createElement('tr');
     noRow.id='noItemsRow';
     noRow.innerHTML=`<td colspan="7" class="no-items">尚未新增商品，請點擊「新增商品」</td>`;
     document.getElementById('itemsBody').appendChild(noRow);
@@ -505,9 +505,9 @@ function submitForm(){
   if(hasEmpty){alert('請選擇所有商品名稱');return;}
   let hasErr=false;
   items.forEach(r=>{
-    const id=r.id.replace('item-','');
-    const name=document.getElementById(`sel-${id}`)?.value;
-    const qty=parseInt(document.getElementById(`qty-${id}`)?.value)||0;
+    consvar idd.replace('item-','');
+    const namevar namegetElementById(`sel-${id}`)?.value;
+    var qty=parseIntvar qty.getElementById(`qty-${id}`)?.value)||0;
     if(stockData[name]!==undefined&&qty>stockData[name]) hasErr=true;
   });
   if(hasErr&&!confirm('部分商品庫存不足，確定要繼續出庫嗎？')) return;
@@ -526,7 +526,7 @@ function showToast(msg){
 </script>
 
 <script>
-const _u2 = JJ.getUser(); if (!_u2) location.href = 'login.html';
+var _u2 = JJ.getUser(); if (!_u2) location.href = 'login.html';
 document.querySelectorAll('.user-name').forEach(el => el.textContent = _u2 ? _u2.name : '');
 
 function getProductOptions2() {
@@ -534,13 +534,13 @@ function getProductOptions2() {
     .map(p => `<option value="${p.id}" data-stock="${p.stock}" data-unit="${p.unit}">${p.name}（現有 ${p.stock} ${p.unit}）</option>`).join('');
 }
 
-const _origAddItem2 = window.addItem;
+var _origAddItem2 = window.addItem;
 window.addItem = function() {
-  const noRow = document.getElementById('noItemsRow');
+  var noRow = document.getElementById('noItemsRow');
   if (noRow) noRow.remove();
   itemCount++;
-  const id = itemCount;
-  const tr = document.createElement('tr');
+  var id = itemCount;
+  var tr = document.createElement('tr');
   tr.id = `item-${id}`;
   tr.innerHTML = `
     <td><select class="item-input" id="sel-${id}" onchange="onSelectProduct2(${id})">
@@ -559,23 +559,23 @@ window.addItem = function() {
 
 window.onSelectProduct = function(id) { onSelectProduct2(id); };
 function onSelectProduct2(id) {
-  const sel = document.getElementById(`sel-${id}`);
-  const opt = sel.selectedOptions[0];
-  const cur = opt ? parseInt(opt.getAttribute('data-stock') || 0) : 0;
-  const unit = opt ? (opt.getAttribute('data-unit') || '—') : '—';
-  const curEl = document.getElementById(`cur-${id}`);
+  var sel = document.getElementById(`sel-${id}`);
+  var opt = sel.selectedOptions[0];
+  var cur = opt ? parseInt(opt.getAttribute('data-stock') || 0) : 0;
+  var unit = opt ? (opt.getAttribute('data-unit') || '—') : '—';
+  var curEl = document.getElementById(`cur-${id}`);
   if (curEl) curEl.textContent = cur;
-  const unitEl = document.getElementById(`unit2-${id}`);
+  var unitEl = document.getElementById(`unit2-${id}`);
   if (unitEl) unitEl.textContent = unit;
   checkStock(id);
 }
 
 window.checkStock = function(id) {
-  const sel = document.getElementById(`sel-${id}`);
-  const opt = sel?.selectedOptions[0];
-  const cur = opt ? parseInt(opt.getAttribute('data-stock') || 0) : 0;
-  const qty = parseInt(document.getElementById(`qty-${id}`)?.value) || 0;
-  const chk = document.getElementById(`chk-${id}`);
+  var sel = document.getElementById(`sel-${id}`);
+  var opt = sel?.selectedOptions[0];
+  var cur = opt ? parseInt(opt.getAttribute('data-stock') || 0) : 0;
+  var qty = parseInt(document.getElementById(`qty-${id}`)?.value) || 0;
+  var chk = document.getElementById(`chk-${id}`);
   if (!sel?.value) { if (chk) chk.textContent = '—'; return; }
   if (chk) {
     if (qty > cur) { chk.textContent = '⚠ 庫存不足'; chk.style.color = 'var(--red)'; }
@@ -586,24 +586,24 @@ window.checkStock = function(id) {
 };
 
 window.submitForm = function() {
-  const items = [...document.getElementById('itemsBody').querySelectorAll('tr[id^="item-"]')];
+  var items = [...document.getElementById('itemsBody').querySelectorAll('tr[id^="item-"]')];
   if (!items.length) { alert('請至少新增一項商品'); return; }
-  const hasEmpty = items.some(r => !r.querySelector('select')?.value);
+  var hasEmpty = items.some(r => !r.querySelector('select')?.value);
   if (hasEmpty) { alert('請選擇所有商品名稱'); return; }
 
-  const outItems = items.map(r => {
-    const id = r.id.replace('item-','');
+  var outItems = items.map(r => {
+    var id = r.id.replace('item-','');
     return { id: r.querySelector('select')?.value, qty: parseInt(document.getElementById(`qty-${id}`)?.value) || 0 };
   });
 
-  const meta = {
+  var meta = {
     wh:   document.getElementById('outWh')?.value || '大溪倉',
     user: _u2.name,
     doc:  'OUT-' + document.getElementById('docNum')?.textContent,
     note: document.getElementById('remark')?.value || '',
   };
 
-  const result = JJ.doOutbound(outItems, meta);
+  var result = JJ.doOutbound(outItems, meta);
   if (!result.ok) {
     if (!confirm('部分商品庫存不足：
 ' + result.errors.join('
@@ -612,8 +612,8 @@ window.submitForm = function() {
 確定強制出庫嗎？')) return;
     // 強制出庫
     outItems.forEach(item => {
-      const p = JJ.getProducts().find(x => x.id === item.id);
-      if (p) { const b = p.stock; p.stock = Math.max(0, p.stock - item.qty); }
+      var p = JJ.getProducts().find(x => x.id === item.id);
+      if (p) { var b = p.stock; p.stock = Math.max(0, p.stock - item.qty); }
     });
     JJ.saveProducts(JJ.getProducts());
   }

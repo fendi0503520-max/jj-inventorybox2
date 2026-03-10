@@ -517,7 +517,7 @@ function removeItem(id){
   const row=document.getElementById(`item-${id}`);
   if(row) row.remove();
   if(document.getElementById('itemsBody').children.length===0){
-    const noRow=document.createElement('tr');
+    var noRow=document.createElement('tr');
     noRow.id='noItemsRow';
     noRow.innerHTML=`<td colspan="6" class="no-items">尚未新增商品，請點擊「新增商品」</td>`;
     document.getElementById('itemsBody').appendChild(noRow);
@@ -569,13 +569,13 @@ function getProductOptions() {
 }
 
 // 覆寫 addItem
-const _origAddItem = window.addItem;
+var _origAddItem = window.addItem;
 window.addItem = function() {
-  const noRow = document.getElementById('noItemsRow');
+  var noRow = document.getElementById('noItemsRow');
   if (noRow) noRow.remove();
   itemCount++;
-  const id = itemCount;
-  const tr = document.createElement('tr');
+  var id = itemCount;
+  var tr = document.createElement('tr');
   tr.id = `item-${id}`;
   tr.innerHTML = `
     <td><select class="item-input" id="sel-${id}" onchange="onProdChange(${id})">
@@ -592,30 +592,30 @@ window.addItem = function() {
 };
 
 function onProdChange(id) {
-  const sel = document.getElementById(`sel-${id}`);
-  const opt = sel.selectedOptions[0];
-  const unit = opt ? (opt.getAttribute('data-unit') || '—') : '—';
-  const unitEl = document.getElementById(`unit-${id}`);
+  var sel = document.getElementById(`sel-${id}`);
+  var opt = sel.selectedOptions[0];
+  var unit = opt ? (opt.getAttribute('data-unit') || '—') : '—';
+  var unitEl = document.getElementById(`unit-${id}`);
   if (unitEl) unitEl.textContent = unit;
   updateTotals();
 }
 
 // 覆寫 submitForm
 window.submitForm = function() {
-  const items = [...document.getElementById('itemsBody').querySelectorAll('tr[id^="item-"]')];
+  var items = [...document.getElementById('itemsBody').querySelectorAll('tr[id^="item-"]')];
   if (!items.length) { alert('請至少新增一項商品'); return; }
-  const hasEmpty = items.some(r => !r.querySelector('select')?.value);
+  var hasEmpty = items.some(r => !r.querySelector('select')?.value);
   if (hasEmpty) { alert('請選擇所有商品名稱'); return; }
 
-  const inItems = items.map(r => {
-    const id = r.id.replace('item-','');
+  var inItems = items.map(r => {
+    var id = r.id.replace('item-','');
     return {
       id:  r.querySelector('select')?.value,
       qty: parseInt(document.getElementById(`qty-${id}`)?.value) || 0,
     };
   });
 
-  const meta = {
+  var meta = {
     wh:   document.getElementById('inWh')?.value || '大溪倉',
     user: _u.name,
     doc:  'IN-' + document.getElementById('docNum')?.textContent,
@@ -634,7 +634,7 @@ window.submitForm = function() {
 (function(){
   const ok = JJ.guardPage('jj-inbound');
   if (!ok) return;
-  const _u = JJ.getUser();
+  covar _u JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

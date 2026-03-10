@@ -357,7 +357,7 @@ function showPreview(){
   const toWh=document.getElementById('toWh').value;
   const pid=document.getElementById('prodSel').value;
   if(!pid){document.getElementById('stockPreview').style.display='none';return;}
-  const products=JJ.getProducts();
+  var products=JJ.getProducts();
   const fromProd=products.find(p=>p.id===pid&&p.wh===fromWh);
   const toProd=products.find(p=>p.name===(fromProd?fromProd.name:'')&&p.wh===toWh);
   document.getElementById('stockPreview').style.display='block';
@@ -367,9 +367,9 @@ function showPreview(){
 }
 
 function checkQty(){
-  const pid=document.getElementById('prodSel').value;
+  var pid=document.getElementById('prodSel').value;
   const qty=parseInt(document.getElementById('qty').value)||0;
-  const fromWh=document.getElementById('fromWh').value;
+  var fromWh=document.getElementById('fromWh').value;
   if(!pid||!qty){document.getElementById('qtyWarn').style.display='none';return;}
   const prod=JJ.getProducts().find(p=>p.id===pid&&p.wh===fromWh);
   const warn=document.getElementById('qtyWarn');
@@ -377,15 +377,15 @@ function checkQty(){
 }
 
 function doTransfer(){
-  const fromWh=document.getElementById('fromWh').value;
-  const toWh=document.getElementById('toWh').value;
-  const pid=document.getElementById('prodSel').value;
-  const qty=parseInt(document.getElementById('qty').value)||0;
+  var fromWh=document.getElementById('fromWh').value;
+  var toWh=document.getElementById('toWh').value;
+  var pid=document.getElementById('prodSel').value;
+  var qty=parseInt(document.getElementById('qty').value)||0;
   if(fromWh===toWh){alert('來源倉庫與目標倉庫不能相同');return;}
   if(!pid){alert('請選擇商品');return;}
   if(!qty||qty<=0){alert('請輸入正確數量');return;}
-  const products=JJ.getProducts();
-  const fromProd=products.find(p=>p.id===pid&&p.wh===fromWh);
+  var products=JJ.getProducts();
+  var fromProd=products.find(p=>p.id===pid&&p.wh===fromWh);
   if(!fromProd||fromProd.stock<qty){alert(`來源庫存不足（現有 ${fromProd?fromProd.stock:0}）`);return;}
   pendingTransfer={fromWh,toWh,prod:fromProd,qty,docNo:document.getElementById('docNo').value,note:document.getElementById('note').value};
   document.getElementById('confirmDetail').innerHTML=
@@ -402,7 +402,7 @@ function closeModal(){document.getElementById('confirmModal').classList.remove('
 function confirmTransfer(){
   if(!pendingTransfer)return;
   const {fromWh,toWh,prod,qty,docNo,note}=pendingTransfer;
-  const products=JJ.getProducts();
+  var products=JJ.getProducts();
   // 扣減來源
   const src=products.find(p=>p.id===prod.id&&p.wh===fromWh);
   src.stock-=qty;

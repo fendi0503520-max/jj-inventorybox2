@@ -386,21 +386,21 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
 
 <script>
 // 守衛
-const _u = JJ.getUser();
+var _u = _u || JJ.getUser();
 if(!_u || !JJ.isSessionAlive()){JJ.clearUser();location.href='login.html';}
 else JJ.touchSession();
 document.getElementById('sName').textContent=_u.name;
 document.getElementById('sRole').textContent=_u.role;
 document.getElementById('sAvatar').textContent=_u.name[0];
 document.getElementById('navBadge').textContent=JJ.getProducts().filter(p=>p.stock<p.safe).length;
-const d=new Date();const days=['日','一','二','三','四','五','六'];
+var d=new Date();var days=['日','一','二','三','四','五','六'];
 document.getElementById('topbarDate').textContent=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} (週${days[d.getDay()]})`;
 document.getElementById('invDate').value=d.toISOString().slice(0,10);
 
-let invItems=[];
+var invItems=[];
 
 function goPhase(n){
-  for(let i=1;i<=4;i++){
+  for(var i=1;i<=4;i++){
     document.getElementById('phase'+i).classList.toggle('active',i===n);
     document.getElementById('s'+i).className='step-num'+(i<n?' done':i===n?' active':'');
     document.getElementById('sl'+i).className='step-label'+(i===n?' active':'');
@@ -409,13 +409,13 @@ function goPhase(n){
 }
 
 function startInventory(){
-  const wh=document.getElementById('invWh').value;
-  const cat=document.getElementById('invCat').value;
-  let products=JJ.getProducts().filter(p=>p.status==='active');
-  if(wh) products=products.filter(p=>p.wh===wh);
-  if(cat) products=products.filter(p=>p.cat===cat);
-  if(!products.length){alert('沒有符合條件的商品');return;}
-  invItems=products.map(p=>({...p,actual:null,note:''}));
+  var wh=document.getElementById('invWh').value;
+  var cat=document.getElementById('invCat').value;
+  var _jjProds =JJ.getProducts().filter(p=>p.status==='active');
+  if(wh) products=_jjProds.filter(p=>p.wh===wh);
+  if(cat) products=_jjProds.filter(p=>p.cat===cat);
+  if(!_jjProds.length){alert('沒有符合條件的商品');return;}
+  invItems=_jjProds.map(p=>({...p,actual:null,note:''}));
   renderInvTable();
   goPhase(2);
   updateKPI();
@@ -436,11 +436,11 @@ function renderInvTable(){
 }
 
 function onActualInput(i){
-  const val=document.getElementById('actual-'+i).value;
+  var val=document.getElementById('actual-'+i).value;
   invItems[i].actual=val===''?null:parseInt(val);
-  const diff=invItems[i].actual!==null?invItems[i].actual-invItems[i].stock:null;
-  const el=document.getElementById('diff-'+i);
-  const inp=document.getElementById('actual-'+i);
+  var diff=invItems[i].actual!==null?invItems[i].actual-invItems[i].stock:null;
+  var el=document.getElementById('diff-'+i);
+  var inp=document.getElementById('actual-'+i);
   if(diff===null){el.innerHTML='<span style="color:var(--muted)">—</span>';inp.classList.remove('changed');}
   else if(diff===0){el.innerHTML='<span class="diff-zero">✓ 相符</span>';inp.classList.remove('changed');}
   else if(diff>0){el.innerHTML=`<span class="diff-plus">+${diff} 多盤</span>`;inp.classList.add('changed');}
@@ -449,8 +449,8 @@ function onActualInput(i){
 }
 
 function updateKPI(){
-  const filled=invItems.filter(p=>p.actual!==null).length;
-  const diffs=invItems.filter(p=>p.actual!==null&&p.actual!==p.stock).length;
+  var filled=invItems.filter(p=>p.actual!==null).length;
+  var diffs=invItems.filter(p=>p.actual!==null&&p.actual!==p.stock).length;
   document.getElementById('kTotal').textContent=invItems.length;
   document.getElementById('kFilled').textContent=filled;
   document.getElementById('kDiff').textContent=diffs;
@@ -460,9 +460,9 @@ function updateKPI(){
 function fillAll(){
   invItems.forEach((p,i)=>{
     p.actual=p.stock;
-    const inp=document.getElementById('actual-'+i);
+    var inp=document.getElementById('actual-'+i);
     if(inp){inp.value=p.stock;inp.classList.remove('changed');}
-    const el=document.getElementById('diff-'+i);
+    var el=document.getElementById('diff-'+i);
     if(el) el.innerHTML='<span class="diff-zero">✓ 相符</span>';
   });
   updateKPI();
@@ -470,7 +470,7 @@ function fillAll(){
 }
 
 function goReview(){
-  const unfilled=invItems.filter(p=>p.actual===null);
+  var unfilled=invItems.filter(p=>p.actual===null);
   if(unfilled.length>0&&!confirm(`還有 ${unfilled.length} 項未輸入實盤，未輸入的將視為帳面數量相符，確定繼續嗎？`))return;
   invItems.forEach(p=>{if(p.actual===null)p.actual=p.stock;});
   renderReview();
@@ -478,10 +478,10 @@ function goReview(){
 }
 
 function renderReview(){
-  const diffs=invItems.filter(p=>p.actual!==p.stock);
-  const matches=invItems.filter(p=>p.actual===p.stock).length;
-  const over=diffs.filter(p=>p.actual>p.stock);
-  const short=diffs.filter(p=>p.actual<p.stock);
+  var diffs=invItems.filter(p=>p.actual!==p.stock);
+  var matches=invItems.filter(p=>p.actual===p.stock).length;
+  var over=diffs.filter(p=>p.actual>p.stock);
+  var short=diffs.filter(p=>p.actual<p.stock);
   document.getElementById('reviewBody').innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
       <div style="background:rgba(61,186,126,0.08);border:1px solid rgba(61,186,126,0.2);border-radius:10px;padding:14px;text-align:center">
@@ -501,8 +501,8 @@ function renderReview(){
       ? '<div style="text-align:center;padding:24px;color:var(--green);font-size:15px;font-weight:700">🎉 帳實完全相符，無差異！</div>'
       : '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px">有差異的商品（需調整庫存）：</div>'
         + diffs.map(p=>{
-            const diff=p.actual-p.stock;
-            const isOver=diff>0;
+            var diff=p.actual-p.stock;
+            var isOver=diff>0;
             return `<div class="diff-row ${isOver?'over':'short'}">
               <div><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.wh} ｜ ${p.note||'無備註'}</div></div>
               <div style="text-align:center"><div style="font-size:11px;color:var(--muted)">帳面</div><div style="font-weight:700">${p.stock}</div></div>
@@ -514,20 +514,20 @@ function renderReview(){
 }
 
 function applyInventory(){
-  const products=JJ.getProducts();
-  let adjusted=0;
+  var _jjProds =JJ.getProducts();
+  var adjusted=0;
   invItems.forEach(p=>{
-    const prod=products.find(x=>x.id===p.id);
+    var prod=_jjProds.find(x=>x.id===p.id);
     if(prod&&prod.stock!==p.actual){
-      const before=prod.stock;
+      var before=prod.stock;
       prod.stock=p.actual;
       JJ.addLog({type:'盤點調整',prod:prod.name,wh:prod.wh,chg:(p.actual>before?'+':'')+(p.actual-before),before,after:p.actual,user:_u.name,doc:`INV-${Date.now()}`,note:p.note||'盤點調整'});
       adjusted++;
     }
   });
-  JJ.saveProducts(products);
+  JJ.saveProducts(_jjProds);
   // 存歷史
-  const hist=JSON.parse(localStorage.getItem('jj_inv_history')||'[]');
+  var hist=JSON.parse(localStorage.getItem('jj_inv_history')||'[]');
   hist.unshift({
     date:document.getElementById('invDate').value,
     wh:document.getElementById('invWh').value||'全部',
@@ -544,7 +544,7 @@ function applyInventory(){
 function newInventory(){invItems=[];goPhase(1);renderHistory();}
 
 function renderHistory(){
-  const hist=JSON.parse(localStorage.getItem('jj_inv_history')||'[]');
+  var hist=JSON.parse(localStorage.getItem('jj_inv_history')||'[]');
   document.getElementById('historyBody').innerHTML=hist.length?
     `<table><thead><tr><th>盤點日期</th><th>倉庫</th><th>說明</th><th>盤點商品數</th><th>調整筆數</th><th>執行人員</th><th>執行時間</th></tr></thead><tbody>`+
     hist.map(h=>`<tr>
@@ -560,7 +560,7 @@ function renderHistory(){
 }
 renderHistory();
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
 
 <script>

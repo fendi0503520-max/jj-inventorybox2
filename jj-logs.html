@@ -406,8 +406,8 @@ const _u = JJ.getUser(); if (!_u) location.href = 'login.html';
 document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
 // 直接執行（原 DOMContentLoaded callback）
 
-  const logs = JJ.getLogs();
-  const tb = document.getElementById('logBody');
+  var logs = JJ.getLogs();
+  var tb = document.getElementById('logBody');
   if (!tb) return;
   const tStyle = {'入庫':{bg:'rgba(74,144,217,0.1)',c:'#4a90d9'},'出庫':{bg:'rgba(61,186,126,0.12)',c:'#3dba7e'},'商品管理':{bg:'rgba(245,166,35,0.12)',c:'#f5a623'},'登入/登出':{bg:'rgba(155,109,255,0.12)',c:'#9b6dff'}};
   function render(list) {
@@ -418,7 +418,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
     document.getElementById('kAdj').textContent = list.filter(x=>x.type&&x.type.includes('調撥')).length;
     tb.innerHTML = list.slice(0,30).map(l => {
       const s = tStyle[l.type]||{bg:'rgba(0,0,0,0.04)',c:'#9ca3af'};
-      const chgStr = String(l.chg).startsWith('+')?`<span style="color:#4a90d9;font-weight:700">${l.chg}</span>`:`<span style="color:#3dba7e;font-weight:700">${l.chg}</span>`;
+      var chgStr = String(l.chg).startsWith('+')?`<span style="color:#4a90d9;font-weight:700">${l.chg}</span>`:`<span style="color:#3dba7e;font-weight:700">${l.chg}</span>`;
       return `<tr>
         <td style="color:#6474880;font-size:12px;white-space:nowrap">${l.time||'—'}</td>
         <td>—</td>
@@ -435,9 +435,9 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
   }
   render(logs);
   document.querySelector('.btn-search')?.addEventListener('click', () => {
-    const type = document.getElementById('fType')?.value;
-    const wh   = document.getElementById('fWh')?.value;
-    const user = document.getElementById('fUser')?.value;
+    var type = document.getElementById('fType')?.value;
+    var wh   = document.getElementById('fWh')?.value;
+    var user = document.getElementById('fUser')?.value;
     render(logs.filter(l => (!type||l.type===type)&&(!wh||String(l.wh).includes(wh))&&(!user||l.user===user)));
   });
 
@@ -448,7 +448,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 (function(){
   const ok = JJ.guardPage('jj-logs');
   if (!ok) return;
-  const _u = JJ.getUser();
+  var _u = JJ.getUser();
   // 更新側欄使用者名稱
   document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.name : '');
   document.querySelectorAll('.user-role').forEach(el => el.textContent = _u ? _u.role : '');

@@ -353,7 +353,7 @@ function checkStrength() {
 
 // 顯示/隱藏密碼
 function toggleEye(id, btn) {
-  const el = document.getElementById(id);
+  var el = document.getElementById(id);
   el.type = el.type==='password'?'text':'password';
   btn.textContent = el.type==='password'?'👁':'🙈';
 }
@@ -380,7 +380,7 @@ function doChangePwd() {
 }
 
 function show(type, msg) {
-  const el = document.getElementById('pwdMsg');
+  var el = document.getElementById('pwdMsg');
   el.className='msg-box '+type; el.textContent=msg; el.style.display='block';
 }
 

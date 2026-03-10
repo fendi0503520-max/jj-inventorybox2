@@ -326,11 +326,11 @@ function switchTab(id, el) {
 // ── QR Code 產生 ──
 function renderQR() {
   const wh = document.getElementById('filterWh').value;
-  let products = JJ.getProducts().filter(p=>p.status==='active');
-  if (wh) products = products.filter(p=>p.wh===wh);
+  var _jjProds = JJ.getProducts().filter(p=>p.status==='active');
+  if (wh) products = _jjProds.filter(p=>p.wh===wh);
   const grid = document.getElementById('qrGrid');
   grid.innerHTML = '';
-  products.forEach(p => {
+  _jjProds.forEach(p => {
     const item = document.createElement('div');
     item.className = 'qr-item';
     item.title = '點擊放大';
@@ -443,8 +443,8 @@ function confirmScan() {
   if (!scanTarget) { alert('找不到此商品，請確認條碼'); return; }
   const type = document.getElementById('scanType').value;
   const qty  = parseInt(document.getElementById('scanQty').value)||1;
-  const products = JJ.getProducts();
-  const p = products.find(x=>x.id===scanTarget.id);
+  var products = JJ.getProducts();
+  covar p products.find(x=>x.id===scanTarget.id);
   if (type==='out' && p.stock<qty) { alert(`庫存不足（現有 ${p.stock}）`); return; }
   const before = p.stock;
   p.stock += type==='in' ? qty : -qty;
