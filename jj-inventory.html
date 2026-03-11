@@ -238,7 +238,7 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
     <div class="nav-item" onclick="location.href='jj-warroom.html'"><span class="nav-icon">🎯</span> 戰情室</div>
     <div class="nav-section">警示與報表</div>
     <div class="nav-item" onclick="location.href='jj-alerts.html'"><span class="nav-icon">🔔</span> 低庫存警示<span class="nav-badge" id="navBadge">0</span></div>
-    <div class="nav-item active" onclick="location.href='jj-inventory.html'" ><span class="nav-icon">🗂️</span> 盤點作業</div>
+    <div class="nav-item" onclick="location.href='jj-inventory.html'" ><span class="nav-icon">🗂️</span> 盤點作業</div>
     <div class="nav-item" onclick="location.href='jj-reports.html'"><span class="nav-icon">📊</span> 報表匯出</div>
     <div class="nav-section">工具</div>
     <div class="nav-item" onclick="location.href='jj-qrcode.html'"><span class="nav-icon">🔲</span> QR Code</div>
@@ -563,66 +563,6 @@ renderHistory();
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 </script>
 
-<script>
 
-// ── 手機側欄開關（全域函式）──
-// [v10.1修復] 手機版：點選選單後自動關閉側欄
-(function(){
-  function _bindAutoClose(){
-    if(window.innerWidth>768)return;
-    document.querySelectorAll('.nav-item').forEach(function(el){
-      if(!el.dataset.acBound){
-        el.dataset.acBound='1';
-        el.addEventListener('touchend',function(){setTimeout(function(){closeSidebar();},80);},{passive:true});
-      }
-    });
-  }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_bindAutoClose);}
-  else{setTimeout(_bindAutoClose,200);}
-  window.addEventListener('resize',_bindAutoClose);
-})();
-function toggleSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (!sb) return;
-  var isOpen = sb.getAttribute('data-open') === '1';
-  if (isOpen) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open', '0');
-    if (btn) btn.classList.remove('active');
-    if (ov)  ov.style.display = 'none';
-  } else {
-    sb.style.transform = 'translateX(0)';
-    sb.setAttribute('data-open', '1');
-    if (btn) btn.classList.add('active');
-    if (ov)  ov.style.display = 'block';
-  }
-}
-function closeSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
-  if (btn) btn.classList.remove('active');
-  if (ov)  ov.style.display = 'none';
-}
-// 手機時初始化側欄狀態
-(function initMobileSidebar(){
-  var sb = document.querySelector('.sidebar');
-  if (!sb) return;
-  // 加上 transition
-  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-  // 手機模式下收起側欄
-  if (window.innerWidth <= 768) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open','0');
-    var main = document.querySelector('.main');
-    if (main) main.style.marginLeft = '0';
-  }
-  sb.setAttribute('data-open','0');
-})();
-
-</script>
 </body>
 </html>

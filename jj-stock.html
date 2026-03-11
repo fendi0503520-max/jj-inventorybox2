@@ -255,8 +255,8 @@ tbody tr:hover td{background:rgba(0,0,0,0.02);}
     <div class="nav-item" onclick="location.href='jj-profile.html'"><span class="nav-icon">👤</span> 帳號設定</div>
   </nav>
   <div class="sidebar-user">
-    <div class="user-avatar">黃</div>
-    <div><div class="user-name">黃小翰</div><div class="user-role">系統管理員</div></div>
+    <div class="user-avatar" id="sAvatar">?</div>
+    <div><div class="user-name" id="sName">—</div><div class="user-role" id="sRole">—</div></div>
     <div class="user-logout" onclick="if(confirm('確定要登出嗎？')){JJ.addLog({type:'登入/登出',prod:'—',wh:'—',chg:'—',before:'—',after:'—',user:(JJ.getUser()||{}).name||'',doc:'—',note:'使用者登出系統'});JJ.clearUser();location.href='login.html';}" style="cursor:pointer">⏻</div>
   </div>
 </aside>
@@ -358,20 +358,7 @@ const d=new Date();const days=['日','一','二','三','四','五','六'];
 document.getElementById('topbarDate').textContent=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} (週${days[d.getDay()]})`;
 
 const catColors={'包裝材料':{bg:'rgba(74,144,217,0.12)',c:'#4a90d9'},'棧板設備':{bg:'rgba(155,109,255,0.12)',c:'#9b6dff'},'搬運工具':{bg:'rgba(245,166,35,0.12)',c:'#f5a623'},'倉儲耗材':{bg:'rgba(61,186,126,0.12)',c:'#3dba7e'}};
-const products=[
-  {name:'防水膠帶 50mm',code:'PKG-001',cat:'包裝材料',unit:'捲',stock:12,safe:100,wh:'大溪倉',status:'低庫存',updated:'今日 14:32'},
-  {name:'棧板 120x100cm',code:'PLT-001',cat:'棧板設備',unit:'片',stock:8,safe:50,wh:'大肚倉',status:'低庫存',updated:'今日 11:48'},
-  {name:'紙箱 A4 尺寸',code:'PKG-002',cat:'包裝材料',unit:'個',stock:45,safe:200,wh:'大溪倉',status:'低庫存',updated:'今日 13:15'},
-  {name:'包裝泡棉 30mm',code:'PKG-003',cat:'包裝材料',unit:'捲',stock:38,safe:150,wh:'大溪倉',status:'低庫存',updated:'昨日 16:00'},
-  {name:'收縮膜 500m',code:'PKG-004',cat:'包裝材料',unit:'捲',stock:3,safe:20,wh:'大肚倉',status:'低庫存',updated:'今日 10:20'},
-  {name:'堆高機 3T',code:'EQP-001',cat:'搬運工具',unit:'台',stock:2,safe:1,wh:'大溪倉',status:'正常',updated:'03/08'},
-  {name:'手推車',code:'EQP-002',cat:'搬運工具',unit:'台',stock:8,safe:3,wh:'大溪倉',status:'正常',updated:'03/07'},
-  {name:'標籤紙 A6',code:'SUP-001',cat:'倉儲耗材',unit:'包',stock:120,safe:50,wh:'岡山倉',status:'正常',updated:'03/09'},
-  {name:'封箱機',code:'EQP-003',cat:'搬運工具',unit:'台',stock:3,safe:2,wh:'大肚倉',status:'正常',updated:'03/06'},
-  {name:'氣泡袋 30x40cm',code:'PKG-005',cat:'包裝材料',unit:'箱',stock:200,safe:80,wh:'大溪倉',status:'正常',updated:'今日 09:05'},
-  {name:'貨架 180cm',code:'STG-001',cat:'棧板設備',unit:'組',stock:15,safe:5,wh:'岡山倉',status:'正常',updated:'03/05'},
-  {name:'條碼掃描器',code:'EQP-004',cat:'搬運工具',unit:'台',stock:0,safe:2,wh:'大溪倉',status:'停用',updated:'03/01'},
-];
+// 資料從 JJ.getProducts() 動態載入（見下方 script）
 
 function statusChip(s){
   if(s==='正常') return `<span class="status-chip" style="background:var(--green-dim);color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>正常</span>`;
@@ -418,17 +405,17 @@ function doFilter(){
   const cat=document.getElementById('fCat').value;
   const wh=document.getElementById('fWh').value;
   const st=document.getElementById('fSt').value;
-  render(products.filter(p=>{
+  render(JJ.getProducts().filter(p=>{
     const mq=!q||p.name.toLowerCase().includes(q)||p.code.toLowerCase().includes(q);
     return mq&&(!cat||p.cat===cat)&&(!wh||p.wh===wh)&&(!st||p.status===st);
   }));
 }
 function resetFilter(){
   ['q','fCat','fWh','fSt'].forEach(id=>document.getElementById(id).value='');
-  render(products);
+  render(JJ.getProducts());
 }
 document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')doFilter();});
-render(products);
+render(JJ.getProducts());
 </script>
 
 <script>
@@ -444,14 +431,14 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
       var col = pct<30?'#e03a2f':pct<70?'#f5a623':'#3dba7e';
       var lvl = pct<30?'緊急':pct<70?'注意':'正常';
       return `<tr>
-        <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#6474880">${p.code}</div></td>
+        <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#64748b">${p.code}</div></td>
         <td><span style="padding:2px 9px;border-radius:7px;font-size:11px;background:rgba(74,144,217,0.1);color:#4a90d9">${p.cat}</span></td>
         <td><span style="font-size:12px;background:rgba(0,0,0,0.04);padding:2px 8px;border-radius:5px">${p.wh}</span></td>
         <td><div style="display:flex;align-items:center;gap:8px"><div style="width:80px;height:6px;background:#374151;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${col};border-radius:3px"></div></div><span style="font-weight:700;color:${col}">${p.stock}</span></div></td>
-        <td style="color:#6474880">${p.safe}</td>
+        <td style="color:#64748b">${p.safe}</td>
         <td><span style="padding:2px 9px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(${pct<30?'224,58,47':pct<70?'245,166,35':'61,186,126'},0.12);color:${col}">${lvl}</span></td>
       </tr>`;
-    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#6474880">查無資料</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#64748b">查無資料</td></tr>';
   }
   var _jjProds = JJ.getProducts();
   renderStock(_jjProds);
@@ -480,52 +467,7 @@ document.querySelectorAll('.user-name').forEach(el => el.textContent = _u ? _u.n
 </script>
 
 
-<script>
 
-// ── 手機側欄開關（全域函式）──
-function toggleSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (!sb) return;
-  var isOpen = sb.getAttribute('data-open') === '1';
-  if (isOpen) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open', '0');
-    if (btn) btn.classList.remove('active');
-    if (ov)  ov.style.display = 'none';
-  } else {
-    sb.style.transform = 'translateX(0)';
-    sb.setAttribute('data-open', '1');
-    if (btn) btn.classList.add('active');
-    if (ov)  ov.style.display = 'block';
-  }
-}
-function closeSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
-  if (btn) btn.classList.remove('active');
-  if (ov)  ov.style.display = 'none';
-}
-// 手機時初始化側欄狀態
-(function initMobileSidebar(){
-  var sb = document.querySelector('.sidebar');
-  if (!sb) return;
-  // 加上 transition
-  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-  // 手機模式下收起側欄
-  if (window.innerWidth <= 768) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open','0');
-    var main = document.querySelector('.main');
-    if (main) main.style.marginLeft = '0';
-  }
-  sb.setAttribute('data-open','0');
-})();
-
-</script>
 <script>
 function exportStockExcel() {
   try {

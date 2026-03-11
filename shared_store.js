@@ -1,10 +1,13 @@
 // ============================================================
-// JJ 庫存管理系統 — 共用資料層 v10.2
-// 修復：手機版側欄三大問題
-// 1. active 選項自動偵測（不再寫死）
-// 2. 手機點選 touchstart 優先，避免 touchend+onclick 衝突
-// 3. 跳頁時機正確，先跳頁再關側欄
+// JJ 庫存管理系統 — 共用資料層 v10.3
+// 修復：
+// 1. 手機側欄 active 自動偵測
+// 2. touchstart 優先，避免 300ms 延遲和 onclick 衝突
+// 3. window.load 後強制覆蓋各頁面舊版 toggleSidebar/closeSidebar
+//    （這是最關鍵修復：各頁 HTML 末尾的舊版函式執行後，
+//     load 事件再把正確版本蓋回去）
 // ============================================================
+
 const JJ = (() => {
   const KEYS = {
     products: 'jj_products',
@@ -17,7 +20,6 @@ const JJ = (() => {
   const SESSION_TIMEOUT = 30 * 60 * 1000;
   const MAX_FAIL = 5;
   const LOCK_DURATION = 15 * 60 * 1000;
-
   const ROLE_ACCESS = {
     '系統管理員': ['*'],
     '倉管人員': [
@@ -31,33 +33,30 @@ const JJ = (() => {
       'jj-alerts','jj-warroom','jj-reports','jj-profile',
     ],
   };
-
   const DEFAULT_USERS = [
     {email:'admin@jj.com.tw', password:'jj1234', name:'黃小翰', role:'系統管理員', mustChange:false},
-    {email:'chen@jj.com.tw', password:'jj1234', name:'陳小華', role:'倉管人員', mustChange:true},
-    {email:'lee@jj.com.tw', password:'jj1234', name:'李大明', role:'倉管人員', mustChange:true},
-    {email:'wang@jj.com.tw', password:'jj1234', name:'王芳芳', role:'唯讀人員', mustChange:true},
+    {email:'chen@jj.com.tw',  password:'jj1234', name:'陳小華', role:'倉管人員',   mustChange:true},
+    {email:'lee@jj.com.tw',   password:'jj1234', name:'李大明', role:'倉管人員',   mustChange:true},
+    {email:'wang@jj.com.tw',  password:'jj1234', name:'王芳芳', role:'唯讀人員',   mustChange:true},
   ];
-
   const DEFAULT_PRODUCTS = [
-    {id:'P001',name:'防水膠帶 50mm',code:'PKG-001',cat:'包裝材料',unit:'捲',stock:12, safe:100,wh:'大溪倉',status:'active'},
-    {id:'P002',name:'棧板 120x100cm',code:'PLT-001',cat:'棧板設備',unit:'片',stock:8, safe:50, wh:'大肚倉',status:'active'},
-    {id:'P003',name:'紙箱 A4 尺寸',code:'PKG-002',cat:'包裝材料',unit:'個',stock:45, safe:200,wh:'大溪倉',status:'active'},
-    {id:'P004',name:'包裝泡棉 30mm',code:'PKG-003',cat:'包裝材料',unit:'包',stock:38, safe:150,wh:'大溪倉',status:'active'},
-    {id:'P005',name:'收縮膜 500m',code:'PKG-004',cat:'包裝材料',unit:'捲',stock:3, safe:20, wh:'大肚倉',status:'active'},
-    {id:'P006',name:'堆高機 3T',code:'EQP-001',cat:'搬運工具',unit:'台',stock:2, safe:2, wh:'大溪倉',status:'active'},
-    {id:'P007',name:'手推車',code:'EQP-002',cat:'搬運工具',unit:'台',stock:8, safe:5, wh:'大溪倉',status:'active'},
-    {id:'P008',name:'標籤紙 A6',code:'PKG-005',cat:'包裝材料',unit:'包',stock:120,safe:50, wh:'岡山倉',status:'active'},
-    {id:'P009',name:'封箱機',code:'EQP-003',cat:'搬運工具',unit:'台',stock:3, safe:2, wh:'大肚倉',status:'active'},
+    {id:'P001',name:'防水膠帶 50mm',   code:'PKG-001',cat:'包裝材料',unit:'捲',stock:12, safe:100,wh:'大溪倉',status:'active'},
+    {id:'P002',name:'棧板 120x100cm', code:'PLT-001',cat:'棧板設備',unit:'片',stock:8,  safe:50, wh:'大肚倉',status:'active'},
+    {id:'P003',name:'紙箱 A4 尺寸',   code:'PKG-002',cat:'包裝材料',unit:'個',stock:45, safe:200,wh:'大溪倉',status:'active'},
+    {id:'P004',name:'包裝泡棉 30mm',  code:'PKG-003',cat:'包裝材料',unit:'包',stock:38, safe:150,wh:'大溪倉',status:'active'},
+    {id:'P005',name:'收縮膜 500m',    code:'PKG-004',cat:'包裝材料',unit:'捲',stock:3,  safe:20, wh:'大肚倉',status:'active'},
+    {id:'P006',name:'堆高機 3T',      code:'EQP-001',cat:'搬運工具',unit:'台',stock:2,  safe:2,  wh:'大溪倉',status:'active'},
+    {id:'P007',name:'手推車',         code:'EQP-002',cat:'搬運工具',unit:'台',stock:8,  safe:5,  wh:'大溪倉',status:'active'},
+    {id:'P008',name:'標籤紙 A6',      code:'PKG-005',cat:'包裝材料',unit:'包',stock:120,safe:50, wh:'岡山倉',status:'active'},
+    {id:'P009',name:'封箱機',         code:'EQP-003',cat:'搬運工具',unit:'台',stock:3,  safe:2,  wh:'大肚倉',status:'active'},
     {id:'P010',name:'氣泡袋 30x40cm',code:'PKG-006',cat:'包裝材料',unit:'個',stock:200,safe:100,wh:'大溪倉',status:'active'},
   ];
 
   function init() {
     if (!localStorage.getItem(KEYS.products)) localStorage.setItem(KEYS.products, JSON.stringify(DEFAULT_PRODUCTS));
-    if (!localStorage.getItem(KEYS.logs)) localStorage.setItem(KEYS.logs, JSON.stringify([]));
-    if (!localStorage.getItem(KEYS.users)) localStorage.setItem(KEYS.users, JSON.stringify(DEFAULT_USERS));
+    if (!localStorage.getItem(KEYS.logs))     localStorage.setItem(KEYS.logs,     JSON.stringify([]));
+    if (!localStorage.getItem(KEYS.users))    localStorage.setItem(KEYS.users,    JSON.stringify(DEFAULT_USERS));
   }
-
   function getProducts() { init(); return JSON.parse(localStorage.getItem(KEYS.products)); }
   function saveProducts(p) { localStorage.setItem(KEYS.products, JSON.stringify(p)); }
   function getLogs() { init(); return JSON.parse(localStorage.getItem(KEYS.logs)); }
@@ -73,7 +72,10 @@ const JJ = (() => {
   function setUser(user) { localStorage.setItem(KEYS.user, JSON.stringify(user)); touchSession(); }
   function clearUser() { localStorage.removeItem(KEYS.user); localStorage.removeItem(KEYS.session); }
   function touchSession() { localStorage.setItem(KEYS.session, Date.now()); }
-  function isSessionAlive() { const t = parseInt(localStorage.getItem(KEYS.session) || '0'); return Date.now() - t < SESSION_TIMEOUT; }
+  function isSessionAlive() {
+    const t = parseInt(localStorage.getItem(KEYS.session) || '0');
+    return Date.now() - t < SESSION_TIMEOUT;
+  }
   function getLocks() { return JSON.parse(localStorage.getItem(KEYS.locks) || '{}'); }
   function saveLocks(l) { localStorage.setItem(KEYS.locks, JSON.stringify(l)); }
   function recordFail(email) {
@@ -104,13 +106,12 @@ const JJ = (() => {
     const user = users.find(u => u.email === email && u.password === password);
     if (!user) {
       const info = recordFail(email);
-      const remaining = MAX_FAIL - info.count;
       if (info.count >= MAX_FAIL) return { ok:false, reason:'locked', minutes: Math.ceil(LOCK_DURATION/60000) };
-      return { ok:false, reason:'wrong', remaining };
+      return { ok:false, reason:'wrong', remaining: MAX_FAIL - info.count };
     }
     clearFail(email);
     setUser({email:user.email, name:user.name, role:user.role, mustChange:user.mustChange});
-    addLog({type:'登入/登出', prod:'—', wh:'—', chg:'—', before:'—', after:'—', user:user.name, doc:'—', note:'使用者登入系統'});
+    addLog({type:'登入/登出',prod:'—',wh:'—',chg:'—',before:'—',after:'—',user:user.name,doc:'—',note:'使用者登入系統'});
     return { ok:true, user, mustChange: user.mustChange };
   }
   function changePassword(email, oldPwd, newPwd) {
@@ -123,7 +124,7 @@ const JJ = (() => {
     u.password = newPwd; u.mustChange = false; saveUsers(users);
     const cur = getUser();
     if (cur && cur.email === email) { cur.mustChange = false; setUser(cur); }
-    addLog({type:'系統設定', prod:'—', wh:'—', chg:'—', before:'—', after:'—', user:u.name, doc:'—', note:'修改密碼'});
+    addLog({type:'系統設定',prod:'—',wh:'—',chg:'—',before:'—',after:'—',user:u.name,doc:'—',note:'修改密碼'});
     return { ok:true };
   }
   function resetPassword(email) {
@@ -146,8 +147,7 @@ const JJ = (() => {
       if (!confirm('首次登入請先修改密碼，點確定前往修改。')) { clearUser(); location.href='login.html'; return false; }
       location.href = 'jj-profile.html'; return false;
     }
-    touchSession();
-    return true;
+    touchSession(); return true;
   }
   function doInbound(items, meta) {
     const products = getProducts();
@@ -169,14 +169,12 @@ const JJ = (() => {
       const p = products.find(x => x.id === item.id);
       if (p) { const b=p.stock; p.stock-=Number(item.qty); addLog({type:'出庫',prod:p.name,wh:meta.wh,chg:`-${item.qty}`,before:b,after:p.stock,user:meta.user,doc:meta.doc,note:meta.note||''}); }
     });
-    saveProducts(products);
-    return { ok:true };
+    saveProducts(products); return { ok:true };
   }
   function resetAll() {
     [KEYS.products,KEYS.logs,KEYS.users,KEYS.locks].forEach(k=>localStorage.removeItem(k));
     init();
   }
-
   return {
     init, getProducts, saveProducts, getLogs, addLog,
     getUsers, saveUsers, getUser, setUser, clearUser,
@@ -189,30 +187,13 @@ const JJ = (() => {
 })();
 
 // ============================================================
-// 手機側欄共用模組 v10.2
-// 修復三大問題：active自動偵測、touchstart優先、正確跳頁時機
+// 手機側欄共用模組 v10.3
+// ★ 核心修復：window.addEventListener('load') 最後強制覆蓋
+//   各頁面 HTML 末尾的舊版 toggleSidebar / closeSidebar
 // ============================================================
 
-// ── 1. 自動偵測並標記 active 選單 ──
-function _jjInitActive() {
-  var page = location.pathname.split('/').pop() || 'index.html';
-  page = page.split('?')[0]; // 移除 query string
-  document.querySelectorAll('.nav-item').forEach(function(el) {
-    var onclick = el.getAttribute('onclick') || '';
-    var match = onclick.match(/location\.href=['"]([^'"]+)['"]/);
-    if (match) {
-      var target = match[1].split('/').pop();
-      if (target === page) {
-        el.classList.add('active');
-      } else {
-        el.classList.remove('active');
-      }
-    }
-  });
-}
-
-// ── 2. 側欄開關函式（全域，各頁面呼叫）──
-function toggleSidebar() {
+// ── 正確版本的核心函式 ──
+function _jjSB_toggle() {
   var sb = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
   var ov = document.getElementById('sidebarOverlay');
@@ -231,44 +212,34 @@ function toggleSidebar() {
   }
 }
 
-function closeSidebar() {
+function _jjSB_close() {
   var sb = document.querySelector('.sidebar');
   var btn = document.getElementById('hamburger');
   var ov = document.getElementById('sidebarOverlay');
-  if (sb) { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open', '0'); }
+  if (sb) { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
   if (btn) btn.classList.remove('active');
   if (ov) ov.style.display = 'none';
 }
 
-// ── 3. 手機版 nav-item 修復：touchstart 優先，避免衝突 ──
-function _jjInitMobileNav() {
-  if (window.innerWidth > 768) return;
+// 也先定義全域版本（DOMContentLoaded 前就可用）
+window.toggleSidebar = _jjSB_toggle;
+window.closeSidebar  = _jjSB_close;
+
+// ── active 自動偵測 ──
+function _jjInitActive() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  page = page.split('?')[0];
   document.querySelectorAll('.nav-item').forEach(function(el) {
-    if (el.dataset.jjMobile) return;
-    el.dataset.jjMobile = '1';
-    var onclick = el.getAttribute('onclick');
-    if (!onclick) return;
+    var onclick = el.getAttribute('onclick') || '';
     var match = onclick.match(/location\.href=['"]([^'"]+)['"]/);
-    if (!match) return;
-    var dest = match[1];
-    // 移除 onclick，改用 touchstart（更快、更可靠）
-    el.removeAttribute('onclick');
-    el.addEventListener('touchstart', function(e) {
-      e.preventDefault(); // 防止 300ms 延遲和 click 重複觸發
-      closeSidebar();
-      // 用 requestAnimationFrame 確保動畫開始後再跳頁
-      requestAnimationFrame(function() {
-        setTimeout(function() { location.href = dest; }, 80);
-      });
-    }, { passive: false });
-    // 保留滑鼠 click（桌機用）
-    el.addEventListener('click', function(e) {
-      if (e.isTrusted) location.href = dest;
-    });
+    if (match) {
+      var target = match[1].split('/').pop().split('?')[0];
+      el.classList.toggle('active', target === page);
+    }
   });
 }
 
-// ── 4. 手機側欄初始化 ──
+// ── 手機側欄初始化 ──
 function _jjInitMobileSidebar() {
   var sb = document.querySelector('.sidebar');
   if (!sb) return;
@@ -285,22 +256,58 @@ function _jjInitMobileSidebar() {
   }
 }
 
-// ── 5. 全部初始化 ──
-(function() {
-  function _run() {
-    _jjInitMobileSidebar();
-    _jjInitActive();
-    _jjInitMobileNav();
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _run);
-  } else {
-    // DOM 已載入，稍後執行確保所有元素就緒
-    setTimeout(_run, 0);
-  }
-  // resize 時重新綁定
+// ── 手機 nav-item 觸控修復（touchstart 優先跳頁）──
+function _jjInitMobileNav() {
+  if (window.innerWidth > 768) return;
+  document.querySelectorAll('.nav-item').forEach(function(el) {
+    if (el.dataset.jjMobile === '1') return;
+    el.dataset.jjMobile = '1';
+    var onclick = el.getAttribute('onclick') || '';
+    var match = onclick.match(/location\.href=['"]([^'"]+)['"]/);
+    if (!match) return;
+    var dest = match[1];
+    el.removeAttribute('onclick');
+    el.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      _jjSB_close();
+      requestAnimationFrame(function() {
+        setTimeout(function() { location.href = dest; }, 80);
+      });
+    }, { passive: false });
+    // 保留桌機 click
+    el.addEventListener('click', function(e) {
+      if (e.isTrusted) location.href = dest;
+    });
+  });
+}
+
+// ── DOMContentLoaded 時初始化 ──
+function _jjRunAll() {
+  _jjInitMobileSidebar();
+  _jjInitActive();
+  _jjInitMobileNav();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _jjRunAll);
+} else {
+  setTimeout(_jjRunAll, 0);
+}
+
+// ── ★ load 事件：強制最終覆蓋（各頁舊版函式執行後再蓋回來）──
+window.addEventListener('load', function() {
+  // 強制把正確版本指回 window
+  window.toggleSidebar = _jjSB_toggle;
+  window.closeSidebar  = _jjSB_close;
+
+  // 重跑一次確保正確
+  _jjInitMobileSidebar();
+  _jjInitActive();
+  _jjInitMobileNav();
+
+  // resize 監聽
   window.addEventListener('resize', function() {
     _jjInitMobileSidebar();
     _jjInitMobileNav();
   });
-})();
+});

@@ -305,110 +305,7 @@ body{display:flex;min-height:100vh;background:var(--bg);font-family:'Noto Sans T
   </div>
 </div>
 
-<script>
-const _u=JJ.getUser();
-if(!_u||!JJ.isSessionAlive()){JJ.clearUser();location.href='login.html';}
-else JJ.touchSession();
-document.getElementById('sName').textContent=_u.name;
-document.getElementById('sRole').textContent=_u.role;
-document.getElementById('sAvatar').textContent=_u.name[0];
-document.getElementById('navBadge').textContent=JJ.getProducts().filter(p=>p.stock<p.safe).length;
-const d=new Date();const days=['日','一','二','三','四','五','六'];
-document.getElementById('topbarDate').textContent=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} (週${days[d.getDay()]})`;
 
-function switchTab(id, el) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('panel-'+id).classList.add('active');
-}
-
-// ── QR Code 產生 ──
-function renderQR() {
-  const wh = document.getElementById('filterWh').value;
-  var _jjProds = JJ.getProducts().filter(p=>p.status==='active');
-  if (wh) products = _jjProds.filter(p=>p.wh===wh);
-  const grid = document.getElementById('qrGrid');
-  grid.innerHTML = '';
-  _jjProds.forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'qr-item';
-    item.title = '點擊放大';
-    const qrBox = document.createElement('div');
-    qrBox.className = 'qr-box';
-    item.appendChild(qrBox);
-    item.innerHTML += `<div class="qr-name">${p.name}</div><div class="qr-code">${p.code}</div><div class="qr-wh">${p.wh}</div><div style="font-size:11px;color:var(--muted)">庫存：${p.stock} ${p.unit}</div>`;
-    grid.appendChild(item);
-    try {
-      new QRCode(qrBox, {
-        text: JSON.stringify({id:p.id,code:p.code,name:p.name}),
-        width:100, height:100,
-        colorDark:'#000000', colorLight:'#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    } catch(e) { qrBox.textContent = p.code; }
-    item.addEventListener('click', () => showBigQR(p));
-  });
-}
-
-function showBigQR(p) {
-  const win = window.open('','_blank','width=400,height=500');
-  win.document.write(`<!DOCTYPE html><html><head><title>${p.name}</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
-  </head><body style="background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;padding:20px">
-  <div id="qr" style="padding:10px;border:2px solid #000;border-radius:8px;margin-bottom:14px"></div>
-  <div style="font-size:18px;font-weight:700;text-align:center">${p.name}</div>
-  <div style="font-size:14px;color:#666;margin:4px 0">${p.code}｜${p.wh}</div>
-  <div style="font-size:12px;color:#666">庫存：${p.stock} ${p.unit}</div>
-  <button onclick="window.print()" style="margin-top:14px;padding:8px 20px;border-radius:6px;background:#000;color:#fff;border:none;cursor:pointer;font-size:14px">列印</button>
-  <script>new QRCode(document.getElementById('qr'),{text:'${JSON.stringify({id:p.id,code:p.code,name:p.name}).replace(/'/g,"\\'")}',width:200,height:200});<\/script>
-  
-<script>
-
-// ── 手機側欄開關（全域函式）──
-function toggleSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (!sb) return;
-  var isOpen = sb.getAttribute('data-open') === '1';
-  if (isOpen) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open', '0');
-    if (btn) btn.classList.remove('active');
-    if (ov)  ov.style.display = 'none';
-  } else {
-    sb.style.transform = 'translateX(0)';
-    sb.setAttribute('data-open', '1');
-    if (btn) btn.classList.add('active');
-    if (ov)  ov.style.display = 'block';
-  }
-}
-function closeSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
-  if (btn) btn.classList.remove('active');
-  if (ov)  ov.style.display = 'none';
-}
-// 手機時初始化側欄狀態
-(function initMobileSidebar(){
-  var sb = document.querySelector('.sidebar');
-  if (!sb) return;
-  // 加上 transition
-  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-  // 手機模式下收起側欄
-  if (window.innerWidth <= 768) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open','0');
-    var main = document.querySelector('.main');
-    if (main) main.style.marginLeft = '0';
-  }
-  sb.setAttribute('data-open','0');
-})();
-
-</script>
 </body></html>`);
   win.document.close();
 }
@@ -444,7 +341,7 @@ function confirmScan() {
   const type = document.getElementById('scanType').value;
   const qty  = parseInt(document.getElementById('scanQty').value)||1;
   var products = JJ.getProducts();
-  covar p products.find(x=>x.id===scanTarget.id);
+  const p = products.find(x=>x.id===scanTarget.id);
   if (type==='out' && p.stock<qty) { alert(`庫存不足（現有 ${p.stock}）`); return; }
   const before = p.stock;
   p.stock += type==='in' ? qty : -qty;

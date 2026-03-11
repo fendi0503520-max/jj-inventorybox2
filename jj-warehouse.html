@@ -236,8 +236,8 @@ select.form-input{cursor:pointer;}
     <div class="nav-item" onclick="location.href='jj-profile.html'"><span class="nav-icon">👤</span> 帳號設定</div>
   </nav>
   <div class="sidebar-user">
-    <div class="user-avatar">黃</div>
-    <div><div class="user-name">黃小翰</div><div class="user-role">系統管理員</div></div>
+    <div class="user-avatar" id="sAvatar">?</div>
+    <div><div class="user-name" id="sName">—</div><div class="user-role" id="sRole">—</div></div>
     <div class="user-logout" onclick="if(confirm('確定要登出嗎？')){JJ.addLog({type:'登入/登出',prod:'—',wh:'—',chg:'—',before:'—',after:'—',user:(JJ.getUser()||{}).name||'',doc:'—',note:'使用者登出系統'});JJ.clearUser();location.href='login.html';}" style="cursor:pointer">⏻</div>
   </div>
 </aside>
@@ -376,51 +376,6 @@ function toast(msg){const t=document.getElementById("toastEl");t.textContent=msg
 </script>
 
 
-<script>
 
-// ── 手機側欄開關（全域函式）──
-function toggleSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (!sb) return;
-  var isOpen = sb.getAttribute('data-open') === '1';
-  if (isOpen) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open', '0');
-    if (btn) btn.classList.remove('active');
-    if (ov)  ov.style.display = 'none';
-  } else {
-    sb.style.transform = 'translateX(0)';
-    sb.setAttribute('data-open', '1');
-    if (btn) btn.classList.add('active');
-    if (ov)  ov.style.display = 'block';
-  }
-}
-function closeSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
-  if (btn) btn.classList.remove('active');
-  if (ov)  ov.style.display = 'none';
-}
-// 手機時初始化側欄狀態
-(function initMobileSidebar(){
-  var sb = document.querySelector('.sidebar');
-  if (!sb) return;
-  // 加上 transition
-  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-  // 手機模式下收起側欄
-  if (window.innerWidth <= 768) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open','0');
-    var main = document.querySelector('.main');
-    if (main) main.style.marginLeft = '0';
-  }
-  sb.setAttribute('data-open','0');
-})();
-
-</script>
 </body>
 </html>

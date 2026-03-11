@@ -266,7 +266,7 @@ select.form-input{cursor:pointer;}
     <nav class="nav">
     <div class="nav-section">主選單</div>
     <div class="nav-item" onclick="location.href='jj-dashboard.html'"><span class="nav-icon">🏠</span> 儀表板</div>
-    <div class="nav-item active" onclick="location.href='jj-products.html'" ><span class="nav-icon">📦</span> 商品管理</div>
+    <div class="nav-item" onclick="location.href='jj-products.html'" ><span class="nav-icon">📦</span> 商品管理</div>
     <div class="nav-item" onclick="location.href='jj-stock.html'"><span class="nav-icon">🔍</span> 庫存查詢</div>
     <div class="nav-section">入出庫作業</div>
     <div class="nav-item" onclick="location.href='jj-inbound.html'"><span class="nav-icon">📥</span> 入庫作業</div>
@@ -289,8 +289,8 @@ select.form-input{cursor:pointer;}
     <div class="nav-item" onclick="location.href='jj-profile.html'"><span class="nav-icon">👤</span> 帳號設定</div>
   </nav>
   <div class="sidebar-user">
-    <div class="user-avatar">黃</div>
-    <div><div class="user-name">黃小翰</div><div class="user-role">系統管理員</div></div>
+    <div class="user-avatar" id="sAvatar">?</div>
+    <div><div class="user-name" id="sName">—</div><div class="user-role" id="sRole">—</div></div>
     <div class="user-logout" onclick="if(confirm('確定要登出嗎？')){JJ.addLog({type:'登入/登出',prod:'—',wh:'—',chg:'—',before:'—',after:'—',user:(JJ.getUser()||{}).name||'',doc:'—',note:'使用者登出系統'});JJ.clearUser();location.href='login.html';}" style="cursor:pointer">⏻</div>
   </div>
 </aside>
@@ -474,7 +474,7 @@ let editId=null;
 function statusStyle(s){
   if(s==='正常') return `<span class="status-dot"><span class="dot" style="background:#3dba7e"></span><span style="color:#3dba7e">正常</span></span>`;
   if(s==='低庫存') return `<span class="status-dot"><span class="dot" style="background:#e03a2f"></span><span style="color:#e03a2f">低庫存</span></span>`;
-  return `<span class="status-dot"><span class="dot" style="background:#6474880"></span><span style="color:#6474880">停用</span></span>`;
+  return `<span class="status-dot"><span class="dot" style="background:#64748b"></span><span style="color:#64748b">停用</span></span>`;
 }
 function stockBar(stock,safe){
   const pct=safe>0?Math.min(100,Math.round(stock/safe*100)):100;
@@ -606,9 +606,9 @@ function renderTable(list) {
   tbody.innerHTML = list.map(p => {
     var pct  = Math.min(100, Math.round(p.stock / p.safe * 100));
     var col  = pct < 30 ? '#e03a2f' : pct < 70 ? '#f5a623' : '#3dba7e';
-    var slabel = p.status === 'active' ? '<span style="color:#3dba7e;font-weight:600">● 啟用</span>' : '<span style="color:#6474880">○ 停用</span>';
+    var slabel = p.status === 'active' ? '<span style="color:#3dba7e;font-weight:600">● 啟用</span>' : '<span style="color:#64748b">○ 停用</span>';
     return `<tr>
-      <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#6474880">${p.code}</div></td>
+      <td><div style="font-weight:600">${p.name}</div><div style="font-size:11px;color:#64748b">${p.code}</div></td>
       <td><span style="padding:2px 9px;border-radius:7px;font-size:11px;font-weight:600;background:rgba(74,144,217,0.1);color:#4a90d9">${p.cat}</span></td>
       <td style="color:#9ca3af">${p.unit}</td>
       <td>
@@ -617,7 +617,7 @@ function renderTable(list) {
           <span style="font-weight:700;color:${col};min-width:28px">${p.stock}</span>
         </div>
       </td>
-      <td style="color:#6474880">${p.safe}</td>
+      <td style="color:#64748b">${p.safe}</td>
       <td><span style="background:rgba(0,0,0,0.04);padding:2px 8px;border-radius:5px;font-size:12px">${p.wh}</span></td>
       <td>${slabel}</td>
       <td style="white-space:nowrap">
@@ -625,7 +625,7 @@ function renderTable(list) {
         <button onclick="deleteProd('${p.id}')" style="padding:4px 10px;border-radius:6px;background:rgba(224,58,47,0.1);color:#e03a2f;border:1px solid rgba(224,58,47,0.2);font-size:12px;cursor:pointer;font-family:inherit">🗑</button>
       </td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#6474880">查無商品資料</td></tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#64748b">查無商品資料</td></tr>';
   renderStats();
 }
 
@@ -653,7 +653,7 @@ function buildModalHTML(p) {
     <div style="background:#ffffff;border:1px solid rgba(255,255,255,0.13);border-radius:16px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:popIn .25s ease">
       <div style="padding:20px 24px;border-bottom:1px solid rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:15px;font-weight:700">${p ? '✏️ 編輯商品' : '➕ 新增商品'}</div>
-        <button onclick="closeModal()" style="background:transparent;border:1px solid rgba(0,0,0,0.05);color:#6474880;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px">✕</button>
+        <button onclick="closeModal()" style="background:transparent;border:1px solid rgba(0,0,0,0.05);color:#64748b;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px">✕</button>
       </div>
       <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
         ${field('商品名稱','mName',p&&p.name,'text','required',true)}
@@ -673,7 +673,7 @@ function buildModalHTML(p) {
         </div>
       </div>
       <div style="padding:16px 24px;border-top:1px solid rgba(0,0,0,0.05);display:flex;justify-content:flex-end;gap:10px">
-        <button onclick="closeModal()" style="padding:9px 18px;border-radius:9px;background:#ffffff;border:1px solid rgba(0,0,0,0.05);color:#6474880;font-size:13px;font-family:inherit;cursor:pointer">取消</button>
+        <button onclick="closeModal()" style="padding:9px 18px;border-radius:9px;background:#ffffff;border:1px solid rgba(0,0,0,0.05);color:#64748b;font-size:13px;font-family:inherit;cursor:pointer">取消</button>
         <button onclick="saveProd()" style="padding:9px 22px;border-radius:9px;background:linear-gradient(135deg,#3dba7e,#2a9960);color:#fff;border:none;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer">✓ 儲存</button>
       </div>
     </div>
@@ -734,7 +734,7 @@ function deleteProd(id) {
   var p = _jjProds.find(x => x.id === id);
   if (!p) return;
   if (!confirm(`確定要刪除「${p.name}」嗎？`)) return;
-  products = _jjProds.filter(x => x.id !== id);
+  _jjProds = _jjProds.filter(x => x.id !== id);
   save();
   renderTable();
   showToast(`🗑 已刪除「${p.name}」`);
@@ -805,7 +805,7 @@ function openImgUpload(productId) {
 }
 
 function getProductImg(productId) {
-  covar imgs JSON.parse(localStorage.getItem('jj_product_imgs') || '{}');
+  const imgs = JSON.parse(localStorage.getItem('jj_product_imgs') || '{}');
   return imgs[productId] || null;
 }
 
@@ -840,7 +840,7 @@ if (typeof _origRender === 'function') {
     document.querySelectorAll('tbody tr').forEach(tr => {
       const firstTd = tr.querySelector('td');
       if (firstTd && !tr.querySelector('[data-prod-img]')) {
-        consvar pidr.getAttribute('data-id') || (firstTd.querySelector('[data-id]') && firstTd.querySelector('[data-id]').getAttribute('data-id'));
+        const pid = tr.getAttribute('data-id') || (firstTd.querySelector('[data-id]') && firstTd.querySelector('[data-id]').getAttribute('data-id'));
         if (pid) {
           const imgTd = document.createElement('td');
           imgTd.setAttribute('data-prod-img', pid);
@@ -858,11 +858,11 @@ const imgObserver = new MutationObserver(() => {
     document.querySelectorAll('tbody tr').forEach(tr => {
       if (tr.querySelector('[data-prod-img]')) return;
       const idEl = tr.querySelector('[data-id],[data-pid]') || tr;
-      const var pidl.getAttribute('data-id') || idEl.getAttribute('data-pid') || tr.getAttribute('data-id');
+      const pid = idEl.getAttribute('data-id') || idEl.getAttribute('data-pid') || tr.getAttribute('data-id');
       if (!pid) return;
-      const imvar imgTdent.createElement('td');
+      const imgTd = document.createElement('td');
       imgTd.setAttribute('data-prod-img', pid);
-      const fivar firstTderySelector('td');
+      const firstTd = tr.querySelector('td');
       if (firstTd) tr.insertBefore(imgTd, firstTd);
     });
     refreshProductImages();
@@ -877,67 +877,7 @@ const imgObserver = new MutationObserver(() => {
 </script>
 
 
-<script>
 
-// ── 手機側欄開關（全域函式）──
-// [v10.1修復] 手機版：點選選單後自動關閉側欄
-(function(){
-  function _bindAutoClose(){
-    if(window.innerWidth>768)return;
-    document.querySelectorAll('.nav-item').forEach(function(el){
-      if(!el.dataset.acBound){
-        el.dataset.acBound='1';
-        el.addEventListener('touchend',function(){setTimeout(function(){closeSidebar();},80);},{passive:true});
-      }
-    });
-  }
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_bindAutoClose);}
-  else{setTimeout(_bindAutoClose,200);}
-  window.addEventListener('resize',_bindAutoClose);
-})();
-function toggleSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (!sb) return;
-  var isOpen = sb.getAttribute('data-open') === '1';
-  if (isOpen) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open', '0');
-    if (btn) btn.classList.remove('active');
-    if (ov)  ov.style.display = 'none';
-  } else {
-    sb.style.transform = 'translateX(0)';
-    sb.setAttribute('data-open', '1');
-    if (btn) btn.classList.add('active');
-    if (ov)  ov.style.display = 'block';
-  }
-}
-function closeSidebar() {
-  var sb  = document.querySelector('.sidebar');
-  var btn = document.getElementById('hamburger');
-  var ov  = document.getElementById('sidebarOverlay');
-  if (sb)  { sb.style.transform = 'translateX(-100%)'; sb.setAttribute('data-open','0'); }
-  if (btn) btn.classList.remove('active');
-  if (ov)  ov.style.display = 'none';
-}
-// 手機時初始化側欄狀態
-(function initMobileSidebar(){
-  var sb = document.querySelector('.sidebar');
-  if (!sb) return;
-  // 加上 transition
-  sb.style.transition = 'transform .28s cubic-bezier(.4,0,.2,1)';
-  // 手機模式下收起側欄
-  if (window.innerWidth <= 768) {
-    sb.style.transform = 'translateX(-100%)';
-    sb.setAttribute('data-open','0');
-    var main = document.querySelector('.main');
-    if (main) main.style.marginLeft = '0';
-  }
-  sb.setAttribute('data-open','0');
-})();
-
-</script>
 <script>
 function exportProductsExcel() {
   try {
