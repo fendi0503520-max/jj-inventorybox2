@@ -258,7 +258,7 @@ function _jjInitMobileSidebar() {
 
 // ── 手機 nav-item 觸控修復（touchstart 優先跳頁）──
 function _jjInitMobileNav() {
-  if (window.innerWidth > 768) return;
+  // 移除寬度限制，所有裝置都正確處理
   document.querySelectorAll('.nav-item').forEach(function(el) {
     if (el.dataset.jjMobile === '1') return;
     el.dataset.jjMobile = '1';
@@ -274,9 +274,11 @@ function _jjInitMobileNav() {
         setTimeout(function() { location.href = dest; }, 80);
       });
     }, { passive: false });
-    // 保留桌機 click
+    // 桌機 click：先關 sidebar 再跳頁
     el.addEventListener('click', function(e) {
-      if (e.isTrusted) location.href = dest;
+      e.preventDefault();
+      _jjSB_close();
+      setTimeout(function() { location.href = dest; }, 30);
     });
   });
 }

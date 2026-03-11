@@ -44,7 +44,7 @@ body{
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   position:fixed;top:0;left:0;height:100vh;
-  z-index:100;
+  z-index: 300;
   transition:transform .3s;
 }
 .sidebar-logo{
@@ -409,7 +409,7 @@ body{
   <span></span><span></span><span></span>
 </button>
 <!-- 側欄遮罩 -->
-<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;"></div>
+<div id="sidebarOverlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;"></div>
 
 <aside class="sidebar">
   <div class="sidebar-logo">
